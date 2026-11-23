@@ -4,6 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" content="#F8FAFD">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="MindNote">
   <title>MindNote — 極簡純白 ADHD 筆記本</title>
   <meta name="description" content="專為快速寫入、課業學術、生活備忘與 ADHD 行動節奏打造的極簡純白高呼吸感筆記系統。" />
   <meta property="og:title" content="MindNote — 極簡純白 ADHD 筆記本" />
@@ -642,7 +646,7 @@
         0 1px 2px rgba(15, 23, 42, .03),
         0 4px 14px rgba(15, 23, 42, .025);
       display: flex; flex-direction: column; gap: 10px;
-      cursor: pointer; user-select: none;
+      cursor: pointer; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none;
       transition: transform .38s var(--spring), box-shadow .3s var(--ease), border-color .25s var(--ease), background-color .25s var(--ease);
     }
     .card:hover {
@@ -2134,7 +2138,7 @@
       const stepDone = stepTotal ? n.steps.filter(s => s.completed).length : 0;
       const hasTags = Boolean(n.tags && n.tags.length);
       return `
-        <article class="card cat-${n.type} ${sel ? 'batch-selected' : ''} ${n.completed ? 'is-done' : ''} ${picked ? 'ai-picked' : ''}" style="--i:${i}" onclick="handleCardClick('${esc(n.id)}', event)">
+        <article class="card cat-${n.type} ${sel ? 'batch-selected' : ''} ${n.completed ? 'is-done' : ''} ${picked ? 'ai-picked' : ''}" data-note-id="${esc(n.id)}" style="--i:${i}" onclick="handleCardClick('${esc(n.id)}', event)">
           <div class="card-top">
             <div class="row gap8">
               ${isBatchMode ? `<label class="round-check" style="--c:var(--primary)" onclick="event.stopPropagation()"><input type="checkbox" ${sel ? 'checked' : ''} onchange="toggleSelectNote('${esc(n.id)}', event)"><span></span></label>` : ''}
@@ -2159,7 +2163,59 @@
         </article>`;
     }
 
-    function handleCardClick(id, e) { isBatchMode ? toggleSelectNote(id, e) : openLightboxModal(id); }
+    // Long-press (~500ms) on any note card to enter batch multi-select mode
+    let longPressTimer = null;
+    let longPressStart = null;
+    let suppressCardClickUntil = 0;
+
+    function cancelCardLongPress() {
+      if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; }
+      longPressStart = null;
+    }
+
+    document.addEventListener('pointerdown', e => {
+      if (e.button !== 0 && e.pointerType === 'mouse') return;
+      if (e.target.closest('button, input, label, a')) return;
+      const card = e.target.closest('.card[data-note-id]');
+      if (!card || card.classList.contains('thinking')) return;
+      cancelCardLongPress();
+      const noteId = card.dataset.noteId;
+      longPressStart = { x: e.clientX, y: e.clientY, id: noteId };
+      longPressTimer = setTimeout(() => {
+        longPressTimer = null;
+        longPressStart = null;
+        suppressCardClickUntil = Date.now() + 500;
+        isBatchMode = true;
+        selectedNoteIds.add(noteId);
+        try { navigator.vibrate && navigator.vibrate(15); } catch (err) {}
+        renderCurrentView();
+      }, 500);
+    }, { passive: true });
+
+    document.addEventListener('pointermove', e => {
+      if (!longPressTimer || !longPressStart) return;
+      if (Math.hypot(e.clientX - longPressStart.x, e.clientY - longPressStart.y) > 10) {
+        cancelCardLongPress();
+      }
+    }, { passive: true });
+
+    ['pointerup', 'pointercancel', 'scroll'].forEach(evt => {
+      window.addEventListener(evt, cancelCardLongPress, { passive: true });
+    });
+
+    document.addEventListener('contextmenu', e => {
+      if (Date.now() < suppressCardClickUntil && e.target.closest('.card[data-note-id]')) {
+        e.preventDefault();
+      }
+    });
+
+    function handleCardClick(id, e) {
+      if (Date.now() < suppressCardClickUntil) {
+        if (e) { e.preventDefault(); e.stopPropagation(); }
+        return;
+      }
+      isBatchMode ? toggleSelectNote(id, e) : openLightboxModal(id);
+    }
 
     // ==========================================
     // 8. Views
@@ -2214,7 +2270,6 @@
             <div class="eyebrow">${todayFormatted}</div>
             <h1 class="display"><span class="grad">${gHead}</span>${currentLang === 'en' ? ', ' : '，'}${gTail}</h1>
           </div>
-          <div class="row gap8 wrap">${batchToolbarHtml()}</div>
         </div>
 
         <div class="stat-row">
@@ -2279,7 +2334,7 @@
 
         <div class="panel-head">
           <h2 class="section-title">${t('allNotes')} <span class="hint" style="font-weight:500;">${allSorted.length}</span></h2>
-          <span class="hint">${t('clickHint')}</span>
+          <div class="row gap8 wrap">${batchToolbarHtml()}</div>
         </div>
         <div class="card-grid">
           ${allSorted.length ? allSorted.map((n, i) => renderCompactCardHtml(n, i)).join('') : `<div class="empty"><div class="empty-icon">${ICON.emptyHorizon}</div><div>${t('emptyNotes')}</div></div>`}
@@ -2415,6 +2470,7 @@
             <button class="btn btn-tonal sm" onclick="exportJsonBackup()">${t('exportJson')}</button>
             <button class="btn btn-outlined sm" onclick="$('importFileInput').click()">${t('importJson')}</button>
             <input type="file" id="importFileInput" accept="application/json,.json" style="display:none;" onchange="importJsonBackup(event)">
+            ${!isPwaStandalone() && deferredInstallPrompt ? `<button class="btn btn-filled sm" onclick="triggerPwaInstall()">${currentLang === 'en' ? 'Install MindNote' : currentLang === 'zh-CN' ? '安装独立应用' : '安裝獨立應用'}</button>` : ''}
             <button class="btn btn-danger-text sm" onclick="resetToDefaults()">${t('resetDemo')}</button>
           </div>
         </section>`;
@@ -2647,8 +2703,147 @@
       else if (e.key.toLowerCase() === 'n') { e.preventDefault(); openNewModal(); }
     });
 
+    // ==========================================
+    // 10. Single-File PWA (Dynamic Canvas Icon + Standalone Blob Manifest)
+    // ==========================================
+    let deferredInstallPrompt = null;
+    const isPwaStandalone = () =>
+      window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+
+    window.addEventListener('beforeinstallprompt', e => {
+      e.preventDefault();
+      deferredInstallPrompt = e;
+      if (currentTab === 'settings') renderCurrentView();
+    });
+    window.addEventListener('appinstalled', () => {
+      deferredInstallPrompt = null;
+      if (currentTab === 'settings') renderCurrentView();
+    });
+
+    async function triggerPwaInstall() {
+      if (!deferredInstallPrompt) return;
+      await deferredInstallPrompt.prompt();
+      const { outcome } = await deferredInstallPrompt.userChoice;
+      if (outcome === 'accepted') deferredInstallPrompt = null;
+      if (currentTab === 'settings') renderCurrentView();
+    }
+
+    function generateMindNoteIconDataUrl(size = 512) {
+      const canvas = document.createElement('canvas');
+      canvas.width = size;
+      canvas.height = size;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return '';
+
+      // Full-bleed soft background for maskable safety + crisp rounded tile
+      const bgGrad = ctx.createLinearGradient(0, 0, size, size);
+      bgGrad.addColorStop(0, '#FFFFFF');
+      bgGrad.addColorStop(1, '#EEF3FC');
+      const r = size * 0.22;
+      ctx.beginPath();
+      ctx.moveTo(r, 0);
+      ctx.arcTo(size, 0, size, size, r);
+      ctx.arcTo(size, size, 0, size, r);
+      ctx.arcTo(0, size, 0, 0, r);
+      ctx.arcTo(0, 0, size, 0, r);
+      ctx.closePath();
+      ctx.fillStyle = bgGrad;
+      ctx.fill();
+
+      // Subtle ambient radial halo behind the emblem
+      const halo = ctx.createRadialGradient(size * 0.5, size * 0.5, size * 0.05, size * 0.5, size * 0.5, size * 0.42);
+      halo.addColorStop(0, 'rgba(155, 114, 203, 0.20)');
+      halo.addColorStop(0.55, 'rgba(66, 133, 244, 0.12)');
+      halo.addColorStop(1, 'rgba(248, 250, 253, 0)');
+      ctx.fillStyle = halo;
+      ctx.fill();
+
+      // Hairline border
+      ctx.lineWidth = Math.max(2, size * 0.008);
+      ctx.strokeStyle = 'rgba(66, 133, 244, 0.14)';
+      ctx.stroke();
+
+      // MindNote 4-point Gemini sparkle star (blue -> purple -> pink gradient)
+      const cx = size * 0.5, cy = size * 0.5;
+      const arm = size * 0.30;
+      const ctrl = size * 0.045;
+      const starGrad = ctx.createLinearGradient(cx - arm, cy - arm, cx + arm, cy + arm);
+      starGrad.addColorStop(0, '#4285F4');
+      starGrad.addColorStop(0.55, '#9B72CB');
+      starGrad.addColorStop(1, '#D96570');
+
+      ctx.save();
+      ctx.shadowColor = 'rgba(155, 114, 203, 0.28)';
+      ctx.shadowBlur = size * 0.045;
+      ctx.shadowOffsetY = size * 0.014;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy - arm);
+      ctx.quadraticCurveTo(cx + ctrl, cy - ctrl, cx + arm, cy);
+      ctx.quadraticCurveTo(cx + ctrl, cy + ctrl, cx, cy + arm);
+      ctx.quadraticCurveTo(cx - ctrl, cy + ctrl, cx - arm, cy);
+      ctx.quadraticCurveTo(cx - ctrl, cy - ctrl, cx, cy - arm);
+      ctx.closePath();
+      ctx.fillStyle = starGrad;
+      ctx.fill();
+      ctx.restore();
+
+      return canvas.toDataURL('image/png');
+    }
+
+    function initSingleFilePwa() {
+      try {
+        const icon512 = generateMindNoteIconDataUrl(512);
+        const icon192 = generateMindNoteIconDataUrl(192);
+        const icon180 = generateMindNoteIconDataUrl(180);
+        if (!icon512) return;
+
+        // Inject PNG favicon & iOS apple-touch-icon dynamically
+        if (!document.querySelector('link[rel="icon"]')) {
+          const fav = document.createElement('link');
+          fav.rel = 'icon'; fav.type = 'image/png'; fav.href = icon192 || icon512;
+          document.head.appendChild(fav);
+        }
+        if (!document.querySelector('link[rel="apple-touch-icon"]')) {
+          const apple = document.createElement('link');
+          apple.rel = 'apple-touch-icon'; apple.sizes = '180x180'; apple.href = icon180 || icon512;
+          document.head.appendChild(apple);
+        }
+
+        // Resolve start_url cleanly for GitHub Pages / HTTPS while keeping "./" fallback
+        const isHttp = location.protocol === 'http:' || location.protocol === 'https:';
+        const resolvedStartUrl = isHttp ? new URL('./', location.href).href : './';
+
+        const manifest = {
+          id: resolvedStartUrl,
+          name: 'MindNote',
+          short_name: 'MindNote',
+          start_url: resolvedStartUrl,
+          scope: resolvedStartUrl,
+          display: 'standalone',
+          background_color: '#F8FAFD',
+          theme_color: '#F8FAFD',
+          icons: [
+            { src: icon192 || icon512, sizes: '192x192', type: 'image/png', purpose: 'any' },
+            { src: icon512, sizes: '512x512', type: 'image/png', purpose: 'any' },
+            { src: icon512, sizes: '512x512', type: 'image/png', purpose: 'maskable' }
+          ]
+        };
+
+        const blob = new Blob([JSON.stringify(manifest)], { type: 'application/manifest+json' });
+        const manifestUrl = URL.createObjectURL(blob);
+        let link = document.querySelector('link[rel="manifest"]');
+        if (!link) {
+          link = document.createElement('link');
+          link.rel = 'manifest';
+          document.head.appendChild(link);
+        }
+        link.href = manifestUrl;
+      } catch (e) {}
+    }
+
     // Boot & Liquid-Mercury Nav Indicator Sync
     function boot() {
+      initSingleFilePwa();
       document.body.dataset.tab = currentTab;
       applyStaticI18n();
       renderCurrentView();
