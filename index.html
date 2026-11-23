@@ -1,0 +1,2523 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#F8FAFD">
+  <title>MindNote — 極簡純白 ADHD 筆記本</title>
+  <meta name="description" content="專為快速寫入、課業學術、生活備忘與 ADHD 行動節奏打造的極簡純白高呼吸感筆記系統。" />
+  <meta property="og:title" content="MindNote — 極簡純白 ADHD 筆記本" />
+  <meta property="og:description" content="專為快速寫入、課業學術、生活備忘與 ADHD 行動節奏打造的極簡純白高呼吸感筆記系統。" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <!-- Fonts: English → Google Sans Flex / Roboto；中文 → Noto Sans TC / SC（現代無襯線黑體） -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap">
+
+  <style>
+    /* =========================================================
+       Design Tokens — Material 3 Expressive inspired
+       ========================================================= */
+    :root {
+      --font: "Google Sans Flex", "Google Sans", "Product Sans", "Roboto",
+              "Noto Sans TC", "Noto Sans SC", "PingFang TC", "PingFang SC",
+              "Microsoft JhengHei", "Microsoft YaHei", sans-serif;
+
+      --primary: #0B57D0;
+      --primary-hover: #0842A0;
+      --on-primary: #FFFFFF;
+      --primary-container: #D3E3FD;
+      --on-primary-container: #041E49;
+
+      --surface: #F8FAFD;
+      --surface-dim: #F0F4F9;
+      --surface-container: #E9EEF6;
+      --surface-high: #DDE3EA;
+      --surface-card: #FFFFFF;
+      --on-surface: #1F1F1F;
+      --on-surface-variant: #444746;
+      --muted: #747775;
+      --outline: #C4C7C5;
+      --outline-soft: #E3E8EF;
+
+      /* Two Domain Categories: Academic (Crimson Laser) & Memo/Life (Glacier Cyan Laser) */
+      --academic: #E11D48; --academic-strong: #BE123C; --academic-bg: #FFF1F2; --academic-border: #FECDD3; --academic-glow: rgba(225, 29, 72, .45);
+      --memo:     #0EA5E9; --memo-strong:     #0369A1; --memo-bg:     #F0F9FF; --memo-border:     #BAE6FD; --memo-glow:     rgba(56, 189, 248, .55);
+      --green:    #16A34A; --green-strong:    #15803D; --green-bg:    #ECFDF5; --green-border:    #BBF7D0;
+      --reason:   #9334E6; --reason-strong:   #7627BB; --reason-bg:   #F5F0FF; --reason-border:   #E2D2FA;
+      --amber:    #F59E0B; --amber-strong:    #B45309; --amber-bg:    #FFFBEB; --amber-border:    #FDE68A;
+
+      --gemini: linear-gradient(90deg, #4285F4 0%, #9B72CB 55%, #38BDF8 100%);
+
+      --ease: cubic-bezier(0.2, 0, 0, 1);
+      --ease-out: cubic-bezier(0.05, 0.7, 0.1, 1);
+      --spring: cubic-bezier(0.34, 1.45, 0.64, 1);
+
+      --r-sm: 12px; --r-md: 16px; --r-lg: 22px; --r-xl: 26px; --r-full: 9999px;
+
+      --shadow-1: 0 1px 2px rgba(15,23,42,.04), 0 2px 8px rgba(15,23,42,.03);
+      --shadow-2: 0 4px 16px rgba(15,23,42,.07), 0 1px 3px rgba(15,23,42,.05);
+      --shadow-3: 0 16px 40px rgba(15,23,42,.14);
+    }
+
+    .cat-academic { --c: var(--academic); --c-strong: var(--academic-strong); --c-bg: var(--academic-bg); --c-border: var(--academic-border); --c-glow: var(--academic-glow); }
+    .cat-memo     { --c: var(--memo);     --c-strong: var(--memo-strong);     --c-bg: var(--memo-bg);     --c-border: var(--memo-border);     --c-glow: var(--memo-glow); }
+    .cat-auto     { --c: #9B72CB;         --c-strong: #5B3E96;                --c-bg: #F3EEFC;            --c-border: #DDD0F6;                --c-glow: rgba(155, 114, 203, .45); }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+    html { font-size: 14px; }
+    body {
+      background: var(--surface);
+      color: var(--on-surface);
+      font-family: var(--font);
+      letter-spacing: .01em;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      display: flex;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    button, input, textarea, select { font-family: inherit; color: inherit; }
+    button { cursor: pointer; }
+    svg { flex-shrink: 0; }
+
+    .row { display: flex; align-items: center; }
+    .gap4 { gap: 4px; } .gap6 { gap: 6px; } .gap8 { gap: 8px; } .gap12 { gap: 12px; }
+    .wrap { flex-wrap: wrap; }
+    .spacer { flex: 1; }
+
+    /* =========================================================
+       Enhanced Ripple & Press Feedback
+       ========================================================= */
+    .rp { position: relative; overflow: hidden; isolation: isolate; }
+    .ripple-wave {
+      position: absolute; border-radius: 50%;
+      background: radial-gradient(circle, currentColor 0%, transparent 72%);
+      opacity: .26;
+      transform: scale(0); pointer-events: none; z-index: 1;
+      animation: ripple .65s var(--ease-out) forwards;
+    }
+    @keyframes ripple {
+      0% { transform: scale(0); opacity: .28; }
+      100% { transform: scale(1.15); opacity: 0; }
+    }
+
+    .particle { position: fixed; width: 8px; height: 8px; border-radius: 50%; pointer-events: none; z-index: 3000; }
+
+    /* =========================================================
+       Buttons & Chrome-style Ask Gemini Pill
+       ========================================================= */
+    .btn {
+      position: relative; overflow: hidden; isolation: isolate;
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      height: 40px; padding: 0 20px;
+      border-radius: var(--r-full);
+      border: 1px solid transparent;
+      font-size: 14px; font-weight: 500; letter-spacing: .01em;
+      white-space: nowrap; user-select: none; outline: none;
+      transition: border-radius .35s var(--spring), transform .35s var(--spring),
+                  background-color .2s var(--ease), box-shadow .2s var(--ease), color .2s var(--ease);
+    }
+    .btn:active:not(:disabled) { border-radius: 12px; transform: scale(.96); }
+    .btn:focus-visible { box-shadow: 0 0 0 3px var(--primary-container); }
+    .btn:disabled { opacity: .45; cursor: not-allowed; }
+    .btn.sm { height: 34px; padding: 0 14px; font-size: 12.5px; }
+    .btn.xs { height: 28px; padding: 0 11px; font-size: 12px; }
+
+    .btn-filled { background: var(--primary); color: var(--on-primary); box-shadow: var(--shadow-1); }
+    .btn-filled:hover:not(:disabled) { background: var(--primary-hover); box-shadow: var(--shadow-2); }
+    .btn-tonal { background: var(--primary-container); color: var(--on-primary-container); }
+    .btn-tonal:hover:not(:disabled) { box-shadow: var(--shadow-1); background: #C2D7FA; }
+    .btn-outlined { background: var(--surface-card); border-color: var(--outline); color: var(--primary); }
+    .btn-outlined:hover:not(:disabled) { background: #F1F5FD; }
+    .btn-text { background: transparent; color: var(--primary); padding: 0 12px; }
+    .btn-text:hover:not(:disabled) { background: rgba(11,87,208,.08); }
+    .btn-danger { background: #B3261E; color: #fff; }
+    .btn-danger:hover:not(:disabled) { background: #8C1D18; }
+    .btn-danger-text { background: transparent; color: #B3261E; }
+    .btn-danger-text:hover { background: rgba(179,38,30,.08); }
+    .btn-green { background: var(--green-strong); color: #fff; }
+    .btn-green:hover { background: #0D652D; }
+
+    .btn-ai {
+      background: var(--gemini); background-size: 200% 100%; color: #fff; font-weight: 600;
+      box-shadow: 0 4px 14px rgba(155,114,203,.28);
+      transition: background-position .6s var(--ease), border-radius .35s var(--spring), transform .35s var(--spring), box-shadow .2s;
+    }
+    .btn-ai:hover:not(:disabled) { background-position: 100% 0; box-shadow: 0 6px 20px rgba(155,114,203,.38); }
+
+    /* Chrome-style subtle Ask Gemini button */
+    .btn-ask-gemini {
+      background: linear-gradient(135deg, #F2F6FF 0%, #F5EEFF 100%);
+      border: 1px solid #D3E3FD;
+      color: #0B57D0;
+      font-weight: 600;
+      box-shadow: 0 1px 2px rgba(11,87,208,.06);
+    }
+    .btn-ask-gemini:hover:not(:disabled) {
+      background: linear-gradient(135deg, #E4EDFF 0%, #EDE2FF 100%);
+      border-color: #A8C7FA;
+      box-shadow: 0 3px 10px rgba(11,87,208,.14);
+      transform: translateY(-1px);
+    }
+    .btn-ask-gemini svg { fill: url(#gemGradBrand); }
+
+    .sort-select {
+      height: 34px; padding: 0 12px;
+      border-radius: var(--r-full);
+      border: 1px solid var(--outline);
+      background: var(--surface-card);
+      font-size: 12.5px; font-weight: 500; color: var(--on-surface);
+      outline: none; cursor: pointer;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .sort-select:hover { border-color: var(--primary); background: #F8FAFF; }
+    .sort-select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-container); }
+
+    .icon-btn {
+      position: relative; overflow: hidden; isolation: isolate;
+      width: 38px; height: 38px; border-radius: var(--r-full);
+      display: inline-flex; align-items: center; justify-content: center;
+      background: transparent; border: none; color: var(--on-surface-variant);
+      transition: background-color .2s var(--ease), transform .35s var(--spring), border-radius .35s var(--spring);
+    }
+    .icon-btn:hover { background: rgba(31,31,31,.07); }
+    .icon-btn:active { transform: scale(.88); border-radius: 12px; }
+    .icon-btn.sm { width: 30px; height: 30px; }
+
+    /* =========================================================
+       Laser-Dot Metadata, Tabular Dates & Quiet Tags
+       ========================================================= */
+    .cat-badge {
+      display: inline-flex; align-items: center; gap: 7px;
+      height: 22px; padding: 0;
+      font-size: 12px; font-weight: 600; letter-spacing: .015em;
+      color: var(--on-surface-variant);
+      background: transparent; border: none;
+      white-space: nowrap;
+    }
+    .cat-badge .laser-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--c);
+      box-shadow: 0 0 0 2.5px rgba(15, 23, 42, 0.04), 0 0 8px var(--c-glow, var(--c));
+      flex-shrink: 0;
+    }
+
+    .chip {
+      display: inline-flex; align-items: center; gap: 6px;
+      height: 22px; padding: 0 2px;
+      border-radius: 6px;
+      font-size: 11.5px; font-weight: 600; letter-spacing: .02em;
+      font-variant-numeric: tabular-nums;
+      background: transparent; color: var(--on-surface-variant);
+      border: none;
+      white-space: nowrap;
+      transition: color .2s var(--ease);
+    }
+    .chip .dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--c);
+      box-shadow: 0 0 7px var(--c-glow, var(--c));
+    }
+    .chip.due-over  { color: #BE123C; }
+    .chip.due-today { color: #B45309; }
+    .chip.due-tmr   { color: #C2410C; }
+    .chip.due-later { color: #64748B; font-weight: 500; }
+
+    .tag {
+      display: inline-flex; align-items: center; height: 20px; padding: 0 2px;
+      font-size: 11.5px; font-weight: 500;
+      color: var(--muted); background: transparent; border: none;
+      white-space: nowrap;
+    }
+
+    .fchip {
+      position: relative; overflow: hidden; isolation: isolate;
+      display: inline-flex; align-items: center; gap: 6px;
+      height: 30px; padding: 0 12px; border-radius: var(--r-full);
+      border: 1px solid rgba(15, 23, 42, .08); background: rgba(255, 255, 255, .72);
+      font-size: 12px; font-weight: 500; color: var(--on-surface-variant);
+      transition: all .3s var(--spring);
+    }
+    .fchip:hover { background: var(--surface-dim); border-color: rgba(15, 23, 42, .14); }
+    .fchip:active { transform: scale(.95); }
+    .fchip.selected {
+      border-color: rgba(15, 23, 42, .12);
+      background: rgba(255, 255, 255, .96);
+      color: var(--on-surface);
+      box-shadow: 0 2px 8px rgba(15, 23, 42, .06), inset 0 1px 0 #fff;
+      font-weight: 600;
+    }
+    .fchip .dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--c, var(--primary));
+      box-shadow: 0 0 6px var(--c-glow, rgba(11, 87, 208, .35));
+    }
+
+    /* =========================================================
+       Sidebar — Navigation rail (Plan A: 2 Domain Categories)
+       ========================================================= */
+    #sidebar {
+      width: 256px; background: var(--surface-dim);
+      padding: 20px 14px; display: flex; flex-direction: column; gap: 16px;
+      flex-shrink: 0; position: sticky; top: 0; height: 100vh; overflow-y: auto; z-index: 20;
+      transition: width .4s var(--ease), padding .4s var(--ease);
+    }
+    #sidebar.collapsed { width: 84px; padding: 20px 12px; }
+    #sidebar.collapsed .sidebar-hide { display: none !important; }
+    #sidebar.collapsed .nav-item { justify-content: center; padding: 0; }
+    #sidebar.collapsed .brand-row { flex-direction: column; gap: 12px; }
+    #sidebar.collapsed .compose-btn { width: 56px; padding: 0; align-self: center; }
+
+    .brand-row { display: flex; align-items: center; justify-content: space-between; padding: 0 4px; }
+    .brand-logo {
+      width: 40px; height: 40px; border-radius: 14px;
+      background: var(--surface-card); color: var(--primary);
+      display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-1);
+      transition: transform .5s var(--spring), border-radius .5s var(--spring);
+    }
+    .brand-logo:hover { transform: rotate(-12deg) scale(1.06); border-radius: 50%; }
+    .brand-logo svg { fill: url(#gemGradBrand); stroke: none; }
+    .brand-name { font-size: 18px; font-weight: 700; letter-spacing: -.01em; }
+    .brand-sub { font-size: 11px; color: var(--muted); }
+
+    .compose-btn {
+      height: 54px; border-radius: 18px; padding: 0 20px;
+      background: var(--primary-container); color: var(--on-primary-container);
+      font-size: 14px; font-weight: 600; justify-content: flex-start; gap: 12px;
+      box-shadow: var(--shadow-1);
+    }
+    .compose-btn:hover { box-shadow: var(--shadow-2); }
+    .compose-btn:active { border-radius: 28px; }
+
+    nav.rail { position: relative; display: flex; flex-direction: column; gap: 2px; }
+    .nav-indicator {
+      position: absolute; top: 0; left: 0;
+      height: 46px; border-radius: var(--r-full);
+      background: linear-gradient(135deg, rgba(255, 255, 255, .96) 0%, rgba(232, 240, 254, .88) 100%);
+      border: 1px solid rgba(255, 255, 255, .95);
+      box-shadow:
+        0 4px 14px rgba(15, 23, 42, .06),
+        0 1px 2px rgba(11, 87, 208, .08),
+        inset 0 1px 0 rgba(255, 255, 255, 1);
+      pointer-events: none; z-index: 0; opacity: 0;
+      transform: translate3d(0, 0, 0);
+      transition:
+        transform .48s cubic-bezier(0.34, 1.45, 0.64, 1),
+        height .35s cubic-bezier(0.34, 1.45, 0.64, 1),
+        width .35s cubic-bezier(0.34, 1.45, 0.64, 1),
+        background .3s var(--ease),
+        box-shadow .3s var(--ease),
+        opacity .2s var(--ease);
+      will-change: transform;
+    }
+    .nav-indicator[data-tab="academic"] {
+      background: linear-gradient(135deg, rgba(255, 255, 255, .97) 0%, rgba(255, 241, 242, .92) 100%);
+      box-shadow: 0 4px 14px rgba(225, 29, 72, .08), inset 0 1px 0 #fff;
+    }
+    .nav-indicator[data-tab="memo"] {
+      background: linear-gradient(135deg, rgba(255, 255, 255, .97) 0%, rgba(240, 249, 255, .95) 100%);
+      box-shadow: 0 4px 14px rgba(14, 165, 233, .10), inset 0 1px 0 #fff;
+    }
+
+    .nav-section { font-size: 11px; font-weight: 600; color: var(--muted); padding: 12px 16px 4px; letter-spacing: .06em; position: relative; z-index: 1; }
+    .nav-item {
+      position: relative; z-index: 1; overflow: hidden; isolation: isolate;
+      width: 100%; height: 46px; padding: 0 16px;
+      border-radius: var(--r-full); border: none; background: transparent;
+      font-size: 14px; font-weight: 500; color: var(--on-surface-variant);
+      display: flex; align-items: center; gap: 14px; text-align: left;
+      transition: background-color .22s var(--ease), color .25s var(--ease), transform .3s var(--spring);
+    }
+    .nav-item:hover:not(.active) { background: rgba(15, 23, 42, .04); color: var(--on-surface); }
+    .nav-item:active { transform: scale(.97); }
+    .nav-item .nav-icon { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; color: var(--c, currentColor); }
+    .nav-item.active { background: transparent; color: var(--c-strong, var(--on-primary-container)); font-weight: 600; }
+    .nav-item .nav-count {
+      margin-left: auto; font-size: 11.5px; font-weight: 600;
+      color: var(--muted); font-variant-numeric: tabular-nums;
+      transition: color .25s var(--ease);
+    }
+    .nav-item.active .nav-count { color: inherit; }
+
+    .lang-pill-group {
+      margin-top: auto; display: flex; gap: 4px; padding: 4px;
+      background: var(--surface-card); border-radius: var(--r-full);
+      border: 1px solid rgba(15, 23, 42, .06);
+      box-shadow: var(--shadow-1);
+    }
+    .lang-pill-group button {
+      flex: 1; height: 28px; border: none; border-radius: var(--r-full);
+      background: transparent; font-size: 11.5px; font-weight: 600; color: var(--muted);
+      transition: all .25s var(--spring);
+    }
+    .lang-pill-group button.active { background: var(--primary-container); color: var(--on-primary-container); }
+
+    .slogan-card {
+      padding: 14px 16px; background: var(--surface-card);
+      border: 1px solid rgba(15, 23, 42, .06);
+      border-radius: 18px; font-size: 12px; line-height: 1.65; color: var(--on-surface-variant);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .95), var(--shadow-1);
+    }
+    .slogan-head {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-weight: 600; color: var(--green-strong); margin-bottom: 5px;
+    }
+    .slogan-icon {
+      width: 22px; height: 22px; border-radius: 7px;
+      display: inline-flex; align-items: center; justify-content: center;
+      background: linear-gradient(145deg, rgba(236, 253, 245, .95), rgba(167, 243, 208, .42));
+      color: #15803D;
+      border: 1px solid rgba(255, 255, 255, .9);
+      box-shadow: 0 2px 8px rgba(22, 163, 74, .16);
+    }
+    .slogan-card b { color: var(--on-surface); font-weight: 600; }
+
+    /* =========================================================
+       Main & Ambient Aura Glow Sticky Prompt Bar
+       ========================================================= */
+    #main-container { flex: 1; padding: 20px 34px 60px; max-width: 1360px; margin: 0 auto; width: 100%; min-width: 0; }
+
+    .prompt-bar {
+      position: sticky; top: 12px; z-index: 15;
+      isolation: isolate;
+      border-radius: var(--r-xl);
+      margin-bottom: 24px;
+    }
+    /* Ambient Aura Glow positioned cleanly behind the frosted glass surface */
+    .prompt-bar::after {
+      content: "";
+      position: absolute;
+      inset: -4px 14px -10px 14px;
+      z-index: -1;
+      border-radius: inherit;
+      background:
+        radial-gradient(ellipse 46% 130% at 16% 52%, rgba(66, 133, 244, .36) 0%, transparent 72%),
+        radial-gradient(ellipse 44% 130% at 50% 44%, rgba(155, 114, 203, .30) 0%, transparent 74%),
+        radial-gradient(ellipse 46% 130% at 84% 54%, rgba(56, 189, 248, .34) 0%, transparent 72%);
+      filter: blur(22px);
+      opacity: .56;
+      pointer-events: none;
+      transform: scale(.985) translateY(3px);
+      transition: opacity .45s var(--ease), transform .5s var(--spring);
+    }
+    .prompt-bar:focus-within::after {
+      opacity: .92;
+      transform: scale(1.015) translateY(4px);
+      animation: auraBreath 4.2s ease-in-out infinite;
+    }
+    .prompt-bar.is-thinking::after {
+      opacity: 1;
+      transform: scale(1.03) translateY(4px);
+      animation: auraBreath 1.8s ease-in-out infinite;
+    }
+    @keyframes auraBreath {
+      0%, 100% { opacity: .82; transform: scale(1.005) translateY(3px); }
+      50%      { opacity: 1;   transform: scale(1.035) translateY(5px); }
+    }
+
+    .prompt-bar-inner {
+      position: relative; z-index: 1;
+      background: rgba(255, 255, 255, .78);
+      backdrop-filter: blur(20px) saturate(1.6);
+      -webkit-backdrop-filter: blur(20px) saturate(1.6);
+      border-radius: inherit;
+      border: 1px solid rgba(255, 255, 255, .92);
+      padding: 6px 8px 6px 14px;
+      display: flex; align-items: center; gap: 8px;
+      box-shadow:
+        0 2px 12px rgba(15, 23, 42, .05),
+        0 0 0 1px rgba(15, 23, 42, .06),
+        inset 0 1px 0 rgba(255, 255, 255, .98);
+      transition: box-shadow .35s var(--ease), background-color .3s var(--ease), border-color .3s var(--ease);
+    }
+    .prompt-bar-inner::before {
+      content: ""; position: absolute; inset: -1px; border-radius: inherit; padding: 1px;
+      background: linear-gradient(90deg, rgba(66,133,244,.85), rgba(155,114,203,.85), rgba(56,189,248,.9), rgba(66,133,244,.85));
+      background-size: 300% 100%;
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor; mask-composite: exclude;
+      opacity: 0; transition: opacity .35s var(--ease); pointer-events: none;
+      animation: flow 5s linear infinite;
+    }
+    .prompt-bar:focus-within .prompt-bar-inner {
+      background: rgba(255, 255, 255, .86);
+      box-shadow:
+        0 8px 26px rgba(66, 133, 244, .12),
+        0 0 0 1px rgba(66, 133, 244, .10),
+        inset 0 1px 0 #fff;
+    }
+    .prompt-bar:focus-within .prompt-bar-inner::before,
+    .prompt-bar.is-thinking .prompt-bar-inner::before { opacity: 1; }
+    .prompt-bar.is-thinking .prompt-bar-inner::before { animation-duration: 1.4s; }
+    @keyframes flow { to { background-position: 300% 0; } }
+
+    .prompt-spark {
+      width: 30px; height: 30px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      background: linear-gradient(135deg, rgba(66, 133, 244, .12), rgba(155, 114, 203, .14), rgba(56, 189, 248, .14));
+      border: 1px solid rgba(255, 255, 255, .85);
+      flex-shrink: 0;
+    }
+    .prompt-spark svg { fill: url(#gemGradBrand); }
+    .prompt-bar.is-thinking .prompt-spark svg { animation: spin 1.2s var(--ease) infinite; }
+
+    .floating-input {
+      flex: 1; min-width: 120px; height: 38px; border: none; outline: none;
+      font-size: 14.5px; background: transparent; color: var(--on-surface);
+    }
+    .floating-input::placeholder { color: var(--muted); }
+    .kbd {
+      font-size: 11px; color: var(--muted); border: 1px solid rgba(15, 23, 42, .12);
+      border-radius: 6px; padding: 0 6px; line-height: 18px;
+      font-variant-numeric: tabular-nums;
+      background: rgba(255, 255, 255, .6);
+    }
+    #quickTypeSelector { display: flex; gap: 4px; }
+    #quickTypeSelector .fchip { height: 28px; padding: 0 10px; font-size: 12px; }
+
+    /* =========================================================
+       Page Headers & Precision Geometric Stat Pedestals
+       ========================================================= */
+    .page-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; margin-bottom: 18px; }
+    .eyebrow { font-size: 12px; font-weight: 600; color: var(--primary); letter-spacing: .04em; margin-bottom: 4px; font-variant-numeric: tabular-nums; }
+    .display { font-size: 28px; font-weight: 700; letter-spacing: -.015em; line-height: 1.25; text-wrap: balance; font-variant-numeric: tabular-nums; }
+    .display .grad { background: var(--gemini); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .page-sub { font-size: 13px; color: var(--on-surface-variant); margin-top: 4px; font-variant-numeric: tabular-nums; }
+
+    .stat-row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 22px; }
+    .stat {
+      flex: 1; min-width: 145px; background: var(--surface-card);
+      border-radius: 20px; padding: 14px 16px;
+      border: 1px solid rgba(15, 23, 42, .07);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .96), var(--shadow-1);
+      display: flex; align-items: center; gap: 13px;
+      transition: transform .35s var(--spring), box-shadow .25s var(--ease), border-color .25s var(--ease);
+    }
+    .stat:hover {
+      transform: translateY(-3px);
+      border-color: rgba(15, 23, 42, .12);
+      box-shadow: inset 0 1px 0 #fff, var(--shadow-2);
+    }
+    .stat:hover .stat-icon { transform: scale(1.06); }
+    .stat-icon {
+      width: 40px; height: 40px; border-radius: 13px;
+      display: flex; align-items: center; justify-content: center;
+      border: 1px solid rgba(255, 255, 255, .88);
+      backdrop-filter: blur(8px);
+      flex-shrink: 0;
+      transition: transform .38s var(--spring), box-shadow .25s var(--ease);
+    }
+    .stat-icon.tone-amber {
+      background: linear-gradient(145deg, rgba(255, 251, 235, .96), rgba(253, 230, 138, .44));
+      color: #B45309;
+      box-shadow: 0 4px 14px rgba(245, 158, 11, .18), inset 0 1px 0 rgba(255, 255, 255, .95);
+    }
+    .stat-icon.tone-crimson {
+      background: linear-gradient(145deg, rgba(255, 241, 242, .96), rgba(254, 205, 211, .48));
+      color: #BE123C;
+      box-shadow: 0 4px 14px rgba(225, 29, 72, .16), inset 0 1px 0 rgba(255, 255, 255, .95);
+    }
+    .stat-icon.tone-azure {
+      background: linear-gradient(145deg, rgba(240, 249, 255, .96), rgba(186, 230, 253, .52));
+      color: #0369A1;
+      box-shadow: 0 4px 14px rgba(14, 165, 233, .18), inset 0 1px 0 rgba(255, 255, 255, .95);
+    }
+    .stat-icon.tone-emerald {
+      background: linear-gradient(145deg, rgba(236, 253, 245, .96), rgba(167, 243, 208, .48));
+      color: #15803D;
+      box-shadow: 0 4px 14px rgba(22, 163, 74, .16), inset 0 1px 0 rgba(255, 255, 255, .95);
+    }
+    .stat-num {
+      font-size: 22px; font-weight: 700; line-height: 1.1; letter-spacing: -.02em;
+      font-variant-numeric: tabular-nums;
+      transition: color .25s var(--ease), transform .35s var(--spring);
+    }
+    .stat-label { font-size: 12px; color: var(--on-surface-variant); margin-top: 2px; }
+
+    .cat-hero { display: flex; align-items: center; gap: 16px; }
+    .cat-hero-icon {
+      width: 54px; height: 54px; border-radius: 18px;
+      background: linear-gradient(145deg, rgba(255,255,255,.95), var(--c-bg));
+      color: var(--c-strong);
+      display: flex; align-items: center; justify-content: center;
+      border: 1px solid rgba(15, 23, 42, .08);
+      box-shadow: 0 6px 18px var(--c-glow), inset 0 1px 0 #fff;
+      transition: border-radius .5s var(--spring), transform .5s var(--spring);
+    }
+    .cat-hero-icon:hover { border-radius: 50%; transform: rotate(-8deg); }
+
+    /* =========================================================
+       Priority Action Flow Panel & Gemini Suggestion Banner
+       ========================================================= */
+    .panel {
+      background: var(--surface-card); border-radius: var(--r-xl); padding: 20px;
+      border: 1px solid rgba(15, 23, 42, .07);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .96), var(--shadow-1);
+      margin-bottom: 26px;
+    }
+    .panel-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; gap: 8px; flex-wrap: wrap; }
+    .panel-title { font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+    .section-title { font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+    .hint { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+    .gemini-advice-banner {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+      padding: 12px 16px; margin-bottom: 14px; border-radius: 16px;
+      background: linear-gradient(135deg, rgba(240, 245, 255, .92) 0%, rgba(246, 238, 255, .9) 100%);
+      border: 1px solid rgba(66, 133, 244, .22);
+      animation: rise .35s var(--ease-out);
+    }
+    .gemini-advice-text { font-size: 13.5px; color: #1F1F1F; line-height: 1.5; flex: 1; min-width: 200px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .gemini-advice-text b { color: #0B57D0; display: inline-flex; align-items: center; gap: 5px; }
+
+    .list { display: flex; flex-direction: column; gap: 6px; }
+    .list-item {
+      position: relative; overflow: hidden; isolation: isolate;
+      display: flex; align-items: center; gap: 14px;
+      padding: 11px 14px; border-radius: 15px;
+      background: var(--surface);
+      border: 1px solid rgba(15, 23, 42, .06);
+      transition: background-color .2s var(--ease), transform .3s var(--spring), border-color .25s, box-shadow .25s;
+    }
+    .list-item:hover { background: var(--surface-dim); border-color: rgba(15, 23, 42, .11); transform: translateX(3px); box-shadow: var(--shadow-1); }
+    .list-item.ai-picked {
+      background: #F3F7FF; border-color: rgba(66, 133, 244, .45);
+      box-shadow: 0 4px 16px rgba(66, 133, 244, .14);
+    }
+    .li-main { flex: 1; min-width: 0; cursor: pointer; }
+    .li-title { min-width: 0; font-size: 14.5px; font-weight: 600; color: var(--on-surface); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .li-sub { font-size: 12px; color: var(--on-surface-variant); margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-variant-numeric: tabular-nums; }
+    .li-actions { display: flex; gap: 6px; flex-shrink: 0; }
+    .meta-sep { color: rgba(15, 23, 42, .22); user-select: none; font-size: 11px; }
+
+    /* Round checkbox */
+    .round-check { position: relative; width: 21px; height: 21px; flex-shrink: 0; cursor: pointer; }
+    .round-check input { position: absolute; opacity: 0; inset: 0; cursor: pointer; margin: 0; }
+    .round-check span {
+      position: absolute; inset: 0; border-radius: 50%;
+      border: 1.75px solid var(--c, var(--outline)); background: var(--surface-card);
+      display: flex; align-items: center; justify-content: center;
+      transition: all .35s var(--spring);
+    }
+    .round-check span::after {
+      content: ""; width: 5px; height: 9px; border: solid #fff; border-width: 0 2px 2px 0;
+      transform: rotate(45deg) scale(0); margin-top: -2px; transition: transform .35s var(--spring);
+    }
+    .round-check:hover span { background: var(--c-bg, var(--surface-dim)); transform: scale(1.08); }
+    .round-check input:checked + span { background: var(--c, var(--primary)); border-color: var(--c, var(--primary)); }
+    .round-check input:checked + span::after { transform: rotate(45deg) scale(1); }
+
+    /* =========================================================
+       Card Grid — Low-Noise Chrome Edge & Hover-Reveal Actions
+       ========================================================= */
+    .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(264px, 1fr)); gap: 16px; }
+
+    .card {
+      position: relative; overflow: hidden; isolation: isolate;
+      background: var(--surface-card);
+      border-radius: var(--r-lg);
+      padding: 17px 18px 14px;
+      border: 1px solid rgba(15, 23, 42, .08);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, .96),
+        0 1px 2px rgba(15, 23, 42, .03),
+        0 4px 14px rgba(15, 23, 42, .025);
+      display: flex; flex-direction: column; gap: 10px;
+      cursor: pointer; user-select: none;
+      transition: transform .38s var(--spring), box-shadow .3s var(--ease), border-color .25s var(--ease), background-color .25s var(--ease);
+    }
+    .card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(15, 23, 42, .15);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 1),
+        0 14px 30px rgba(15, 23, 42, .09),
+        0 3px 10px rgba(15, 23, 42, .04);
+    }
+    .card:active { transform: translateY(-1px) scale(.988); }
+    .card.is-done { opacity: .58; }
+    .card.is-done .card-title { text-decoration: line-through; text-decoration-color: rgba(15, 23, 42, .35); }
+    .card.batch-selected { background: #F0F6FF; border-color: var(--primary); box-shadow: 0 0 0 1px var(--primary), var(--shadow-1); }
+    .card.ai-picked { border-color: rgba(66, 133, 244, .55); box-shadow: inset 0 1px 0 #fff, 0 10px 28px rgba(66, 133, 244, .18); }
+
+    .card-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+    .card-title {
+      font-size: 15.5px; font-weight: 700; line-height: 1.42; color: var(--on-surface);
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .card-desc {
+      font-size: 13px; color: var(--on-surface-variant); line-height: 1.55;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+    }
+
+    .progress { height: 4px; border-radius: 99px; background: rgba(15, 23, 42, .06); overflow: hidden; }
+    .progress > i {
+      display: block; height: 100%; border-radius: 99px;
+      background: var(--c);
+      box-shadow: 0 0 8px var(--c-glow, transparent);
+      transition: width .55s var(--spring);
+    }
+    .progress-label {
+      display: flex; justify-content: space-between; font-size: 11.5px;
+      color: var(--muted); margin-bottom: 5px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .card-foot {
+      display: flex; justify-content: space-between; align-items: center; gap: 8px;
+      margin-top: auto; padding-top: 10px;
+      border-top: 1px solid rgba(15, 23, 42, .06);
+      min-height: 40px;
+    }
+    .card-tags { display: flex; gap: 6px; overflow: hidden; min-width: 0; mask-image: linear-gradient(90deg, #000 85%, transparent); }
+
+    /* Progressive Disclosure: Hover-Reveal Secondary Actions */
+    .card-actions {
+      display: flex; align-items: center; gap: 4px; flex-shrink: 0;
+      opacity: 0;
+      transform: translateY(4px) scale(.97);
+      pointer-events: none;
+      transition: opacity .25s var(--spring), transform .25s var(--spring);
+    }
+    .card:hover .card-actions,
+    .card:focus-within .card-actions,
+    .card.is-done .card-actions {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      pointer-events: auto;
+    }
+    @media (hover: none), (pointer: coarse) {
+      .card-actions { opacity: 1; transform: none; pointer-events: auto; }
+    }
+
+    .star-btn { opacity: .5; transition: opacity .2s var(--ease), background-color .2s var(--ease), transform .35s var(--spring); }
+    .card:hover .star-btn, .star-btn.on { opacity: 1; }
+    .star-btn svg { transition: transform .45s var(--spring); }
+    .star-btn.on svg { fill: #F59E0B; stroke: #F59E0B; }
+    .star-btn:active svg { transform: scale(1.35) rotate(72deg); }
+
+    .check-pill {
+      position: relative; overflow: hidden; isolation: isolate;
+      height: 28px; padding: 0 10px; border-radius: var(--r-full);
+      border: 1px solid rgba(15, 23, 42, .12); background: var(--surface-card); color: var(--on-surface-variant);
+      font-size: 11.5px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;
+      transition: all .28s var(--spring);
+    }
+    .check-pill:hover { background: var(--surface-dim); color: var(--on-surface); border-color: rgba(15, 23, 42, .2); }
+    .check-pill:active { transform: scale(.92); border-radius: 10px; }
+    .check-pill.done { background: var(--green-bg); color: var(--green-strong); border-color: rgba(22, 163, 74, .25); }
+
+    .card.thinking {
+      cursor: wait;
+      background: linear-gradient(135deg, #FFFFFF 0%, #F4F1FC 100%);
+      border-color: rgba(155, 114, 203, .28);
+    }
+    .shimmer {
+      height: 10px; border-radius: 6px;
+      background: linear-gradient(90deg, #ECE6F6 0%, #F8F5FD 50%, #ECE6F6 100%);
+      background-size: 200% 100%; animation: shimmer 1.2s linear infinite;
+    }
+    @keyframes shimmer { to { background-position: -200% 0; } }
+
+    .animate-in .card, .animate-in .list-item, .animate-in .stat, .animate-in .panel {
+      animation: rise .5s var(--ease-out) both;
+      animation-delay: calc(var(--i, 0) * 30ms);
+    }
+    @keyframes rise { from { opacity: 0; transform: translateY(12px) scale(.98); } to { opacity: 1; transform: none; } }
+
+    .empty {
+      grid-column: 1 / -1; text-align: center; padding: 44px 16px; color: var(--muted);
+      background: var(--surface-card); border-radius: var(--r-xl);
+      border: 1px dashed rgba(15, 23, 42, .14);
+      display: flex; flex-direction: column; align-items: center; gap: 10px;
+    }
+    .empty-icon {
+      width: 48px; height: 48px; border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--surface); color: var(--muted);
+      border: 1px solid rgba(15, 23, 42, .06);
+    }
+
+    /* =========================================================
+       Calendar
+       ========================================================= */
+    .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+    .cal-week { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 8px; }
+    .cal-cell {
+      position: relative; overflow: hidden; isolation: isolate;
+      min-height: 88px; padding: 8px; border-radius: 16px; background: var(--surface);
+      border: 1px solid transparent; text-align: left; display: flex; flex-direction: column; gap: 4px;
+      transition: transform .35s var(--spring), border-radius .35s var(--spring), background-color .2s;
+    }
+    .cal-cell:hover { background: var(--surface-dim); border-radius: 20px; }
+    .cal-cell:active { transform: scale(.95); }
+    .cal-cell.empty-cell { background: transparent; pointer-events: none; }
+    .cal-cell.selected { border-color: var(--primary); background: #F1F5FD; }
+    .cal-num {
+      width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-size: 12.5px; font-weight: 600; font-variant-numeric: tabular-nums;
+    }
+    .cal-cell.today .cal-num { background: var(--primary); color: #fff; }
+    .cal-pill {
+      font-size: 11px; padding: 1px 7px; border-radius: 6px; background: var(--c-bg); color: var(--c-strong);
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap; border-left: 3px solid var(--c);
+    }
+    .cal-pill.done { opacity: .5; text-decoration: line-through; }
+    .cal-more { font-size: 11px; color: var(--muted); padding-left: 4px; }
+    .cal-dots { display: none; gap: 3px; flex-wrap: wrap; }
+    .cal-dots i { width: 6px; height: 6px; border-radius: 50%; background: var(--c); }
+
+    /* =========================================================
+       Inputs & AI Step Co-pilot Drawer
+       ========================================================= */
+    .field-label { display: block; font-size: 12px; font-weight: 600; color: var(--on-surface-variant); margin-bottom: 6px; }
+    .modal-input {
+      width: 100%; padding: 11px 15px; border-radius: 14px;
+      border: 1px solid var(--outline); background: var(--surface-card);
+      font-size: 14px; color: var(--on-surface); outline: none; margin-bottom: 12px;
+      transition: border-color .2s var(--ease), box-shadow .2s var(--ease), border-radius .3s var(--spring);
+    }
+    .modal-input:hover { border-color: var(--on-surface-variant); }
+    .modal-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(11,87,208,.14); border-radius: 16px; }
+    textarea.modal-input { resize: vertical; line-height: 1.6; }
+    .search-field { position: relative; margin-bottom: 16px; }
+    .search-field svg { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: var(--muted); }
+    .search-field input { height: 52px; border-radius: var(--r-full); padding-left: 48px; font-size: 14.5px; margin: 0; background: var(--surface-dim); border-color: transparent; }
+    .search-field input:focus { background: var(--surface-card); border-radius: var(--r-full); }
+
+    .callout { border-radius: 18px; padding: 13px 16px; margin-bottom: 14px; border: 1px solid; }
+    .callout-title { font-size: 12.5px; font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+    .callout.purple { background: var(--reason-bg); border-color: var(--reason-border); color: var(--reason-strong); }
+    .callout.neutral { background: var(--surface); border-color: var(--outline-soft); color: var(--on-surface-variant); }
+    .callout .modal-input { margin-bottom: 0; }
+
+    /* Interactive AI Step Co-pilot Panel inside Lightbox */
+    .ai-copilot-box {
+      background: linear-gradient(135deg, #F3F7FF 0%, #F7F0FF 100%);
+      border: 1.5px solid #D3E3FD;
+      border-radius: 20px;
+      padding: 14px 16px;
+      margin-bottom: 16px;
+      animation: rise .3s var(--ease-out);
+    }
+    .ai-draft-item {
+      display: flex; align-items: center; gap: 8px;
+      padding: 7px 10px; border-radius: 10px;
+      background: rgba(255,255,255,.85);
+      font-size: 13.5px; color: var(--on-surface);
+    }
+    .ai-draft-item input {
+      flex: 1; border: none; background: transparent; font-size: 13.5px; outline: none;
+    }
+
+    /* =========================================================
+       Modals
+       ========================================================= */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(31,31,31,.32);
+      backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 1000; opacity: 0; pointer-events: none; padding: 16px;
+      transition: opacity .3s var(--ease);
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: auto; }
+    .modal-box {
+      background: var(--surface-card); border-radius: var(--r-xl);
+      padding: 26px; max-width: 640px; width: 100%; max-height: 90vh; overflow-y: auto;
+      box-shadow: var(--shadow-3);
+      transform: translateY(24px) scale(.94); opacity: .4;
+      transition: transform .5s var(--spring), opacity .25s var(--ease);
+    }
+    .modal-overlay.open .modal-box { transform: none; opacity: 1; }
+    .modal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; gap: 8px; }
+    .modal-title { font-size: 21px; font-weight: 700; line-height: 1.4; }
+    .sheet-handle { display: none; width: 36px; height: 4px; border-radius: 4px; background: var(--outline); margin: -12px auto 14px; }
+    .modal-actions { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; padding-top: 14px; border-top: 1px solid var(--outline-soft); }
+
+    .ai-box { background: linear-gradient(135deg, #EEF3FE, #F4EEFB); padding: 7px; border-radius: 22px; margin-bottom: 16px; display: flex; gap: 8px; align-items: center; }
+    .ai-box .modal-input { margin: 0; border-color: transparent; border-radius: var(--r-full); }
+
+    .step-row {
+      position: relative; overflow: hidden; isolation: isolate;
+      display: flex; align-items: center; gap: 10px; padding: 9px 12px;
+      background: var(--surface); border-radius: 14px; font-size: 14px;
+      transition: background-color .2s, border-radius .35s var(--spring);
+    }
+    .step-row:hover { background: var(--surface-dim); }
+    .step-row.done .step-edit-input { text-decoration: line-through; color: var(--muted); }
+    .step-edit-input {
+      flex: 1; min-width: 0; border: none; background: transparent;
+      font-size: 14px; color: var(--on-surface); outline: none;
+      padding: 2px 6px; border-radius: 6px;
+    }
+    .step-edit-input:focus { background: var(--surface-card); box-shadow: 0 0 0 2px var(--primary-container); }
+
+    /* Timer rings */
+    .ring-wrap { position: relative; width: 220px; height: 220px; margin: 8px auto 18px; }
+    .ring { width: 100%; height: 100%; transform: rotate(-90deg); }
+    .ring circle { fill: none; stroke-width: 12; }
+    .ring-track { stroke: var(--surface-container); }
+    .ring-bar { stroke-linecap: round; stroke-dasharray: 552.92; transition: stroke-dashoffset 1s linear; }
+    .ring-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .timer-num { font-family: "Google Sans Flex", "Roboto", sans-serif; font-size: 48px; font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+    .timer-sub { font-size: 12px; color: var(--muted); }
+    .ring-wrap.running .ring-bar { filter: drop-shadow(0 0 6px rgba(155,114,203,.4)); }
+
+    #appToast {
+      position: fixed; bottom: 24px; left: 50%;
+      background: #303030; color: #F2F2F2;
+      padding: 13px 20px; border-radius: 14px; font-size: 13.5px; font-weight: 500;
+      box-shadow: var(--shadow-3); z-index: 2000;
+      opacity: 0; transform: translate(-50%, 20px) scale(.96);
+      transition: opacity .25s var(--ease), transform .45s var(--spring);
+      pointer-events: none; max-width: calc(100vw - 32px);
+    }
+    #appToast.show { opacity: 1; transform: translate(-50%, 0) scale(1); }
+
+    .fab { display: none; }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-thumb { background: var(--outline); border-radius: 99px; border: 2px solid transparent; background-clip: padding-box; }
+    ::-webkit-scrollbar-track { background: transparent; }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+    }
+
+    @media (max-width: 768px) {
+      body { flex-direction: column; padding-bottom: 80px; }
+      #sidebar, #sidebar.collapsed {
+        position: fixed; bottom: 0; left: 0; right: 0; top: auto;
+        width: 100%; height: auto; padding: 6px 4px calc(6px + env(safe-area-inset-bottom));
+        flex-direction: row; background: rgba(240,244,249,.95);
+        backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+        box-shadow: 0 -1px 0 var(--outline-soft); overflow: visible;
+      }
+      #sidebar .brand-row, #sidebar .compose-btn, #sidebar .slogan-card, #sidebar .nav-section, #sidebar .lang-pill-group { display: none !important; }
+      nav.rail { flex-direction: row; width: 100%; overflow-x: auto; gap: 0; scrollbar-width: none; }
+      nav.rail::-webkit-scrollbar { display: none; }
+      .nav-item, #sidebar.collapsed .nav-item {
+        flex-direction: column; justify-content: center; gap: 2px; height: 60px; min-width: 64px; flex: 1;
+        padding: 0 4px; font-size: 11px; border-radius: 16px; background: transparent !important;
+      }
+      #sidebar.collapsed .sidebar-hide.nav-label { display: block !important; }
+      .nav-item .nav-icon { width: 54px; height: 28px; border-radius: 99px; transition: background-color .3s var(--ease); }
+      .nav-indicator { border-radius: 16px; }
+      .nav-item .nav-count { display: none; }
+
+      #main-container { padding: 12px 14px 24px; }
+      .prompt-bar { top: 8px; border-radius: 24px; }
+      .prompt-bar-inner { flex-wrap: wrap; padding: 8px 10px; }
+      .prompt-bar .floating-input { flex-basis: calc(100% - 44px); }
+      .prompt-bar .kbd { display: none; }
+      #quickTypeSelector { order: 3; flex: 1; overflow-x: auto; }
+      #voiceBtn { order: 4; } #aiPlanBtn { order: 5; } #detailBtn { display: none; }
+      .display { font-size: 24px; }
+      .stat { min-width: calc(50% - 6px); padding: 12px 14px; }
+      .card-grid { grid-template-columns: 1fr; }
+
+      .cal-cell { min-height: 54px; padding: 4px; align-items: center; }
+      .cal-pill, .cal-more { display: none; }
+      .cal-dots { display: flex; justify-content: center; }
+
+      .modal-overlay { align-items: flex-end; padding: 0; }
+      .modal-box {
+        border-radius: 28px 28px 0 0; max-height: 92vh; padding: 24px 20px calc(20px + env(safe-area-inset-bottom));
+        transform: translateY(100%); opacity: 1;
+      }
+      .sheet-handle { display: block; }
+
+      .fab {
+        display: flex; position: fixed; right: 16px; bottom: calc(88px + env(safe-area-inset-bottom)); z-index: 30;
+        width: 56px; height: 56px; border-radius: 18px; border: none;
+        background: var(--primary-container); color: var(--on-primary-container);
+        align-items: center; justify-content: center; box-shadow: var(--shadow-3);
+      }
+      #appToast { bottom: calc(96px + env(safe-area-inset-bottom)); }
+    }
+  </style>
+</head>
+<body>
+  <!-- Shared SVG gradients -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <linearGradient id="gemGradBrand" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#4285F4"/>
+        <stop offset="55%" stop-color="#9B72CB"/>
+        <stop offset="100%" stop-color="#D96570"/>
+      </linearGradient>
+      <linearGradient id="gemGradRing" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#4285F4"/>
+        <stop offset="55%" stop-color="#9B72CB"/>
+        <stop offset="100%" stop-color="#D96570"/>
+      </linearGradient>
+    </defs>
+  </svg>
+
+  <!-- ================= Sidebar ================= -->
+  <aside id="sidebar">
+    <div class="brand-row">
+      <div class="row gap12">
+        <div class="brand-logo">
+          <svg width="22" height="22" viewBox="0 0 24 24"><path d="M12 2c.6 4.9 4.1 9 9 10-4.9.6-9 4.1-10 9-.6-4.9-4.1-9-9-10 4.9-.6 9-4.1 10-9z"/></svg>
+        </div>
+        <div class="sidebar-hide">
+          <div class="brand-name">MindNote</div>
+          <div class="brand-sub" data-i18n="brandSub">極簡快速 · 有序行動</div>
+        </div>
+      </div>
+      <button class="icon-btn" onclick="toggleSidebar()" title="Toggle Sidebar">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="4"/><path d="M9 3v18"/></svg>
+      </button>
+    </div>
+
+    <button class="btn compose-btn" onclick="openNewModal()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+      <span class="sidebar-hide" data-i18n="newNote">快速新增筆記</span>
+    </button>
+
+    <nav class="rail" id="navRail">
+      <div class="nav-indicator" id="navIndicator" aria-hidden="true"></div>
+      <button class="nav-item active" data-tab="home" onclick="switchNavTab('home')">
+        <span class="nav-icon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg></span>
+        <span class="sidebar-hide nav-label" data-i18n="navHome">今日行動</span>
+        <span class="sidebar-hide nav-count" data-count="home"></span>
+      </button>
+
+      <div class="nav-section sidebar-hide" data-i18n="navCat">分類</div>
+      <button class="nav-item cat-academic" data-tab="academic" onclick="switchNavTab('academic')">
+        <span class="nav-icon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10 12 5 2 10l10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5M22 10v6"/></svg></span>
+        <span class="sidebar-hide nav-label" data-i18n="catAcademic">學術課業</span>
+        <span class="sidebar-hide nav-count" data-count="academic"></span>
+      </button>
+      <button class="nav-item cat-memo" data-tab="memo" onclick="switchNavTab('memo')">
+        <span class="nav-icon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17v5"/><path d="M7.5 4h9l-1.2 5.2 2.4 2.8a1 1 0 0 1-.76 1.65H7.06a1 1 0 0 1-.76-1.65l2.4-2.8L7.5 4Z"/></svg></span>
+        <span class="sidebar-hide nav-label" data-i18n="catMemo">生活備忘</span>
+        <span class="sidebar-hide nav-count" data-count="memo"></span>
+      </button>
+
+      <div class="nav-section sidebar-hide" data-i18n="navTools">工具</div>
+      <button class="nav-item" data-tab="calendar" onclick="switchNavTab('calendar')">
+        <span class="nav-icon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="3"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span>
+        <span class="sidebar-hide nav-label" data-i18n="navCal">日曆</span>
+      </button>
+      <button class="nav-item" data-tab="search" onclick="switchNavTab('search')">
+        <span class="nav-icon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></span>
+        <span class="sidebar-hide nav-label" data-i18n="navSearch">搜尋標籤</span>
+      </button>
+      <button class="nav-item" data-tab="settings" onclick="switchNavTab('settings')">
+        <span class="nav-icon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></span>
+        <span class="sidebar-hide nav-label" data-i18n="navSettings">設定</span>
+      </button>
+    </nav>
+
+    <div class="lang-pill-group sidebar-hide" id="sidebarLangGroup">
+      <button onclick="setLanguage('zh-TW')" data-lang="zh-TW">繁</button>
+      <button onclick="setLanguage('zh-CN')" data-lang="zh-CN">简</button>
+      <button onclick="setLanguage('en')" data-lang="en">EN</button>
+    </div>
+
+    <div class="slogan-card sidebar-hide">
+      <div class="slogan-head">
+        <span class="slogan-icon" aria-hidden="true">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19c2-7 7-12 14-14-1 7-6 12-14 14Z"/><path d="M5 19c4-4 8-7 12-9"/></svg>
+        </span>
+        <span data-i18n="sloganTag">行動節奏</span>
+      </div>
+      <div><b data-i18n="sloganMain">「不是只記下來，而是讓你願意做下去。」</b></div>
+    </div>
+  </aside>
+
+  <!-- ================= Main ================= -->
+  <main id="main-container">
+    <div class="prompt-bar" id="promptBar">
+      <div class="prompt-bar-inner">
+        <div class="prompt-spark">
+          <svg width="16" height="16" viewBox="0 0 24 24"><path d="M12 2c.6 4.9 4.1 9 9 10-4.9.6-9 4.1-10 9-.6-4.9-4.1-9-9-10 4.9-.6 9-4.1 10-9z"/></svg>
+        </div>
+        <input id="quickPromptInput" class="floating-input" autocomplete="off"
+               onkeydown="if(event.key==='Enter' && !event.isComposing) executeAiQuickCapture()">
+        <span class="kbd">/</span>
+
+        <div id="quickTypeSelector">
+          <button type="button" class="fchip cat-auto selected" data-type="auto" onclick="setQuickType('auto')"><span class="dot"></span><span data-i18n="auto">自動</span></button>
+          <button type="button" class="fchip cat-academic" data-type="academic" onclick="setQuickType('academic')"><span class="dot"></span><span data-i18n="academicShort">學術</span></button>
+          <button type="button" class="fchip cat-memo" data-type="memo" onclick="setQuickType('memo')"><span class="dot"></span><span data-i18n="memoShort">備忘</span></button>
+        </div>
+
+        <button id="voiceBtn" class="icon-btn" onclick="toggleVoiceInput()" title="Voice">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v3"/></svg>
+        </button>
+        <button id="detailBtn" class="icon-btn" onclick="openNewModalWithDraft()" title="Full Form">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h10M4 18h7"/></svg>
+        </button>
+        <button id="aiPlanBtn" class="btn btn-ai sm" onclick="executeAiQuickCapture()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c.6 4.9 4.1 9 9 10-4.9.6-9 4.1-10 9-.6-4.9-4.1-9-9-10 4.9-.6 9-4.1 10-9z"/></svg>
+          <span data-i18n="addBtn">新增</span>
+        </button>
+      </div>
+    </div>
+
+    <div id="viewArea"></div>
+  </main>
+
+  <button class="fab" onclick="openNewModal()" title="New Note">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+  </button>
+
+  <!-- ================= Lightbox + AI Step Co-pilot ================= -->
+  <div id="lightboxModal" class="modal-overlay" onclick="if(event.target===this) closeLightboxModal()">
+    <div class="modal-box" onclick="event.stopPropagation()">
+      <div class="sheet-handle"></div>
+      <div class="modal-head">
+        <div id="lightboxBadge"></div>
+        <button class="icon-btn sm" onclick="closeLightboxModal()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <h2 id="lightboxTitle" class="modal-title" style="margin-bottom:12px;"></h2>
+      <div id="lightboxContentBox"></div>
+      <div id="lightboxReasonBox"></div>
+      <div id="lightboxCopilotArea"></div>
+      <div id="lightboxStepsBox" style="margin-bottom:18px;"></div>
+      <div class="modal-actions">
+        <div class="row gap8 wrap">
+          <button id="lightboxSprintBtn" class="btn btn-filled sm"></button>
+          <button id="lightboxAiStepBtn" class="btn btn-ask-gemini sm"></button>
+        </div>
+        <div class="row gap4">
+          <button id="lightboxDeleteBtn" class="btn btn-danger-text sm"></button>
+          <button id="lightboxEditBtn" class="btn btn-outlined sm"></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= Create / Edit Modal ================= -->
+  <div id="createModal" class="modal-overlay" onclick="if(event.target===this) closeNewModal()">
+    <div class="modal-box" onclick="event.stopPropagation()">
+      <div class="sheet-handle"></div>
+      <div class="modal-head">
+        <h2 class="modal-title" id="modalFormHeading"></h2>
+        <button class="icon-btn sm" onclick="closeNewModal()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div class="ai-box">
+        <input id="aiModalPromptInput" class="modal-input" onkeydown="if(event.key==='Enter' && !event.isComposing) fillModalViaAi()">
+        <button type="button" id="aiFillBtn" class="btn btn-ai sm" onclick="fillModalViaAi()"></button>
+      </div>
+
+      <div class="row gap8 wrap" style="margin-bottom:14px;">
+        <button type="button" id="modalType-academic" class="fchip cat-academic" onclick="setModalCategory('academic')"><span class="dot"></span><span data-i18n="catAcademic">學術課業</span></button>
+        <button type="button" id="modalType-memo" class="fchip cat-memo" onclick="setModalCategory('memo')"><span class="dot"></span><span data-i18n="catMemo">生活備忘</span></button>
+      </div>
+
+      <input id="formTitle" class="modal-input" style="font-size:15.5px; font-weight:600;">
+      <textarea id="formContent" class="modal-input" rows="2"></textarea>
+
+      <div class="callout purple">
+        <div class="callout-title" id="formReasonLabel"></div>
+        <input id="formReason" class="modal-input">
+      </div>
+
+      <label class="field-label" id="formStepsLabel"></label>
+      <textarea id="formSteps" class="modal-input" rows="3"></textarea>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+        <div>
+          <label class="field-label" id="formDueLabel"></label>
+          <input type="date" id="formDueDate" class="modal-input">
+        </div>
+        <div>
+          <label class="field-label" id="formTagsLabel"></label>
+          <input id="formTags" class="modal-input" placeholder="#生物 #作業">
+        </div>
+      </div>
+
+      <div class="row gap8" style="justify-content:flex-end; margin-top:6px;">
+        <button class="btn btn-text" onclick="closeNewModal()" id="formCancelBtn"></button>
+        <button class="btn btn-filled" onclick="saveNoteForm()" id="formSaveBtn"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= 15-min Sprint Modal ================= -->
+  <div id="sprintModal" class="modal-overlay" onclick="if(event.target===this) closeSprintModal()">
+    <div class="modal-box" style="text-align:center; max-width:420px;" onclick="event.stopPropagation()">
+      <div class="sheet-handle"></div>
+      <div class="modal-head">
+        <span class="chip cat-memo" id="sprintBadge"></span>
+        <button class="icon-btn sm" onclick="closeSprintModal()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <h3 id="sprintTaskTitle" style="font-size:18px; font-weight:700;"></h3>
+      <div class="ring-wrap" id="sprintRingWrap">
+        <svg class="ring" viewBox="0 0 200 200">
+          <circle class="ring-track" cx="100" cy="100" r="88"/>
+          <circle class="ring-bar" id="sprintRing" cx="100" cy="100" r="88" stroke="url(#gemGradRing)"/>
+        </svg>
+        <div class="ring-center">
+          <div class="timer-num" id="sprintTimerDisplay">15:00</div>
+          <div class="timer-sub" id="sprintSub"></div>
+        </div>
+      </div>
+      <p id="sprintHint" style="font-size:13px; color:var(--on-surface-variant); margin-bottom:20px;"></p>
+      <div class="row gap8" style="justify-content:center;">
+        <button class="btn btn-outlined" onclick="resetSprintTimer()" id="sprintResetBtn"></button>
+        <button id="sprintToggleBtn" class="btn btn-filled" onclick="toggleSprintTimer()"></button>
+        <button class="btn btn-tonal" onclick="add5MinSprint()">+5m</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= Confirm Dialog ================= -->
+  <div id="confirmModal" class="modal-overlay" style="z-index:1100;" onclick="if(event.target===this) resolveConfirm(false)">
+    <div class="modal-box" style="max-width:400px;" onclick="event.stopPropagation()">
+      <div class="sheet-handle"></div>
+      <h3 id="confirmTitle" class="modal-title" style="font-size:19px; margin-bottom:8px;"></h3>
+      <p id="confirmMessage" style="font-size:14px; color:var(--on-surface-variant); line-height:1.65; margin-bottom:22px;"></p>
+      <div class="row gap8" style="justify-content:flex-end;">
+        <button class="btn btn-text sm" onclick="resolveConfirm(false)" id="confirmCancelBtn"></button>
+        <button id="confirmOkBtn" class="btn btn-danger sm" onclick="resolveConfirm(true)"></button>
+      </div>
+    </div>
+  </div>
+
+  <div id="appToast" role="status" aria-live="polite"></div>
+
+  <script>
+    // ==========================================
+    // 0. Trilingual I18N (zh-TW / zh-CN / en)
+    // ==========================================
+    const I18N = {
+      'zh-TW': {
+        brandSub: '極簡快速 · 有序行動', newNote: '快速新增筆記', navHome: '今日行動', navCat: '分類',
+        catAcademic: '學術課業', catMemo: '生活備忘', academicShort: '學術', memoShort: '備忘', auto: '自動',
+        navTools: '工具', navCal: '日曆', navSearch: '搜尋標籤', navSettings: '設定',
+        sloganTag: '行動節奏', sloganMain: '「不是只記下來，而是讓你願意做下去。」',
+        quickPh: '丟進一個念頭（例：明天遺傳學期中考 / 買牛奶）', addBtn: '新增', thinking: '思考中',
+        statToday: '今天到期', statOver: '已逾期', statPending: '進行中', statDone: '已完成',
+        priorityFlow: '優先待辦', askGemini: '問問 Gemini', askingGemini: '分析中…',
+        sort7d: '7 天內到期', sortAll: '全部未完成', sortToday: '今日與逾期', sortDue: '截止日最近', sortStar: '星號優先', sortNew: '最新建立',
+        allNotes: '全部筆記', clickHint: '點擊卡片檢視與編輯步驟', batchEdit: '批次編輯',
+        selectAll: '全選', unselectAll: '取消全選', deleteSel: '刪除', done: '完成', completed: '已完成',
+        sprint: '衝刺', sprint15: '15 分鐘衝刺', aiStepsBtn: 'AI 幫寫步驟',
+        edit: '編輯', del: '刪除', cancel: '取消', save: '儲存筆記', ok: '確定',
+        dueOver: d => `逾期 ${d}D`, dueToday: '今天', dueTmr: '明天', dueLater: d => `${d}D`,
+        stepProgress: '執行步驟', addStepPh: '手動新增一步，按 Enter…',
+        copilotTitle: 'Gemini 步驟草稿（可直接點字修改）', copilotPh: '不滿意？告訴 AI 怎麼改（例：再拆細一點、只有 30 分鐘）',
+        copilotRefine: '請 AI 重寫', copilotAdopt: '採納寫入',
+        formNew: '新增筆記', formEdit: '編輯筆記', aiFillPh: '一句話交給 AI 自動填表…', aiFillBtn: 'AI 填表',
+        formTitlePh: '標題（具體動作）', formContentPh: '詳細內容或備註（選填）',
+        formReasonLbl: '為什麼要做？（選填）', formReasonPh: '一句話提醒自己好處或代價…',
+        formStepsLbl: '執行步驟（每行一步）', formStepsPh: '打開講義\n劃出重點\n完成習題 1~3',
+        formDueLbl: '目標日期', formTagsLbl: '標籤（空格分隔）',
+        sprintSubRun: '專注中', sprintSubPause: '已暫停', sprintSubDone: '衝刺完成',
+        sprintHint: '不追求完美，只求動起來。撐過前幾分鐘就會進入狀態。', sprintReset: '重設', sprintStart: '開始衝刺', sprintPause: '暫停', sprintResume: '繼續', sprintMarkDone: '標記任務完成',
+        catAcademicDesc: '考試、作業、論文與研究。', catMemoDesc: '日常雜事、運動、聯絡與提醒。',
+        emptyFlow: '這個篩選範圍內沒有待辦了，可切換排序查看全部。', emptyNotes: '目前沒有筆記，從上方輸入框新增吧。',
+        calTitle: '日曆視圖', calSub: '把截止日攤開來看，告別時間盲區。', today: '今天', addOnDay: '＋ 在這天新增', emptyDay: '這天沒有安排，留白也很好。',
+        searchTitle: '搜尋與標籤', searchPh: '搜尋標題、內容或 #標籤…', searchRes: '搜尋結果', searchEmpty: '找不到相符的筆記',
+        settingsTitle: '系統設定與 API', settingsSub: '配置 Gemini 免費 API Key、語系與本地備份。',
+        langLabel: '介面語言', saveSettings: '儲存設定', clearKey: '清除 Key',
+        aiActive: 'AI 已啟用（短句自動 0 Token）', aiOffline: '離線規則引擎',
+        backupTitle: '本地資料與備份', exportJson: '匯出 JSON 備份', importJson: '匯入 JSON 備份', resetDemo: '重設示範資料',
+        aiLangInstruction: '請使用繁體中文回答。',
+        openCard: '開啟這張卡片'
+      },
+      'zh-CN': {
+        brandSub: '极简快速 · 有序行动', newNote: '快速新增笔记', navHome: '今日行动', navCat: '分类',
+        catAcademic: '学术课业', catMemo: '生活备忘', academicShort: '学术', memoShort: '备忘', auto: '自动',
+        navTools: '工具', navCal: '日历', navSearch: '搜索标签', navSettings: '设置',
+        sloganTag: '行动节奏', sloganMain: '「不是只记下来，而是让你愿意做下去。」',
+        quickPh: '丢进一个念头（例：明天遗传学期中考 / 买牛奶）', addBtn: '新增', thinking: '思考中',
+        statToday: '今天到期', statOver: '已逾期', statPending: '进行中', statDone: '已完成',
+        priorityFlow: '优先待办', askGemini: '问问 Gemini', askingGemini: '分析中…',
+        sort7d: '7 天内到期', sortAll: '全部未完成', sortToday: '今日与逾期', sortDue: '截止日最近', sortStar: '星标优先', sortNew: '最新创建',
+        allNotes: '全部笔记', clickHint: '点击卡片查看与编辑步骤', batchEdit: '批量编辑',
+        selectAll: '全选', unselectAll: '取消全选', deleteSel: '删除', done: '完成', completed: '已完成',
+        sprint: '冲刺', sprint15: '15 分钟冲刺', aiStepsBtn: 'AI 帮写步骤',
+        edit: '编辑', del: '删除', cancel: '取消', save: '保存笔记', ok: '确定',
+        dueOver: d => `逾期 ${d}D`, dueToday: '今天', dueTmr: '明天', dueLater: d => `${d}D`,
+        stepProgress: '执行步骤', addStepPh: '手动新增一步，按 Enter…',
+        copilotTitle: 'Gemini 步骤草稿（可直接点字修改）', copilotPh: '不满意？告诉 AI 怎么改（例：再拆细一点、只有 30 分钟）',
+        copilotRefine: '请 AI 重写', copilotAdopt: '采纳写入',
+        formNew: '新增笔记', formEdit: '编辑笔记', aiFillPh: '一句话交给 AI 自动填表…', aiFillBtn: 'AI 填表',
+        formTitlePh: '标题（具体动作）', formContentPh: '详细内容或备注（选填）',
+        formReasonLbl: '为什么要做？（选填）', formReasonPh: '一句话提醒自己好处或代价…',
+        formStepsLbl: '执行步骤（每行一步）', formStepsPh: '打开讲义\n划出重点\n完成习题 1~3',
+        formDueLbl: '目标日期', formTagsLbl: '标签（空格分隔）',
+        sprintSubRun: '专注中', sprintSubPause: '已暂停', sprintSubDone: '冲刺完成',
+        sprintHint: '不追求完美，只求动起来。撑过前几分钟就会进入状态。', sprintReset: '重设', sprintStart: '开始冲刺', sprintPause: '暂停', sprintResume: '继续', sprintMarkDone: '标记任务完成',
+        catAcademicDesc: '考试、作业、论文与研究。', catMemoDesc: '日常杂事、运动、联络与提醒。',
+        emptyFlow: '这个筛选范围内没有待办了，可切换排序查看全部。', emptyNotes: '目前没有笔记，从上方输入框新增吧。',
+        calTitle: '日历视图', calSub: '把截止日摊开来看，告别时间盲区。', today: '今天', addOnDay: '＋ 在这天新增', emptyDay: '这天没有安排，留白也很好。',
+        searchTitle: '搜索与标签', searchPh: '搜索标题、内容或 #标签…', searchRes: '搜索结果', searchEmpty: '找不到相符的笔记',
+        settingsTitle: '系统设置与 API', settingsSub: '配置 Gemini 免费 API Key、语言与本地备份。',
+        langLabel: '界面语言', saveSettings: '保存设置', clearKey: '清除 Key',
+        aiActive: 'AI 已启用（短句自动 0 Token）', aiOffline: '离线规则引擎',
+        backupTitle: '本地数据与备份', exportJson: '导出 JSON 备份', importJson: '导入 JSON 备份', resetDemo: '重设示范数据',
+        aiLangInstruction: '请使用简体中文回答。',
+        openCard: '打开这张卡片'
+      },
+      'en': {
+        brandSub: 'Minimal · Action First', newNote: 'New Note', navHome: 'Today Flow', navCat: 'Categories',
+        catAcademic: 'Academic', catMemo: 'Life & Memo', academicShort: 'Academic', memoShort: 'Memo', auto: 'Auto',
+        navTools: 'Tools', navCal: 'Calendar', navSearch: 'Search', navSettings: 'Settings',
+        sloganTag: 'Momentum', sloganMain: '"Not just capturing notes, but making it easy to start."',
+        quickPh: 'Drop a thought (e.g., Genetics midterm tomorrow / Buy milk)', addBtn: 'Add', thinking: 'Thinking',
+        statToday: 'Due Today', statOver: 'Overdue', statPending: 'Active', statDone: 'Done',
+        priorityFlow: 'Priority Flow', askGemini: 'Ask Gemini', askingGemini: 'Picking…',
+        sort7d: 'Next 7 Days', sortAll: 'All Active', sortToday: 'Today & Overdue', sortDue: 'Soonest Due', sortStar: 'Starred First', sortNew: 'Newest',
+        allNotes: 'All Notes', clickHint: 'Click a card to view & edit steps', batchEdit: 'Batch Edit',
+        selectAll: 'Select All', unselectAll: 'Clear', deleteSel: 'Delete', done: 'Done', completed: 'Completed',
+        sprint: 'Sprint', sprint15: '15m Sprint', aiStepsBtn: 'AI Steps',
+        edit: 'Edit', del: 'Delete', cancel: 'Cancel', save: 'Save Note', ok: 'Confirm',
+        dueOver: d => `-${d}D`, dueToday: 'Today', dueTmr: '1D', dueLater: d => `${d}D`,
+        stepProgress: 'Action Steps', addStepPh: 'Add a step manually, press Enter…',
+        copilotTitle: 'Gemini Draft Steps (click text to edit)', copilotPh: 'Ask AI to adjust (e.g., break smaller, I only have 30 mins)',
+        copilotRefine: 'Refine', copilotAdopt: 'Adopt Steps',
+        formNew: 'New Note', formEdit: 'Edit Note', aiFillPh: 'One sentence for AI to auto-fill…', aiFillBtn: 'AI Fill',
+        formTitlePh: 'Title (concrete action)', formContentPh: 'Details or notes (optional)',
+        formReasonLbl: 'Why do this? (optional)', formReasonPh: 'One-line motivation or cost of delay…',
+        formStepsLbl: 'Steps (one per line)', formStepsPh: 'Open slides\nHighlight key concepts\nFinish Q1-Q3',
+        formDueLbl: 'Due Date', formTagsLbl: 'Tags (space separated)',
+        sprintSubRun: 'Focusing', sprintSubPause: 'Paused', sprintSubDone: 'Sprint Done',
+        sprintHint: 'Progress over perfection. Just get past the first 2 minutes.', sprintReset: 'Reset', sprintStart: 'Start', sprintPause: 'Pause', sprintResume: 'Resume', sprintMarkDone: 'Complete Task',
+        catAcademicDesc: 'Exams, assignments, papers & research.', catMemoDesc: 'Errands, workouts, emails & reminders.',
+        emptyFlow: 'Clear for this filter. Switch sort to view all active tasks.', emptyNotes: 'No notes yet. Add one above.',
+        calTitle: 'Calendar', calSub: 'See deadlines clearly to beat time blindness.', today: 'Today', addOnDay: '+ Add on day', emptyDay: 'Nothing scheduled. Enjoy the space.',
+        searchTitle: 'Search & Tags', searchPh: 'Search title, content, or #tags…', searchRes: 'Results', searchEmpty: 'No matching notes found',
+        settingsTitle: 'Settings & API', settingsSub: 'Configure free Gemini API Key, language & local backup.',
+        langLabel: 'Language', saveSettings: 'Save Settings', clearKey: 'Clear Key',
+        aiActive: 'AI Active (0-Token for short tasks)', aiOffline: 'Offline Rule Engine',
+        backupTitle: 'Local Data & Backup', exportJson: 'Export JSON', importJson: 'Import JSON', resetDemo: 'Reset Demo Data',
+        aiLangInstruction: 'Respond in concise English.',
+        openCard: 'Open Card'
+      }
+    };
+
+    let currentLang = localStorage.getItem('mindnote_lang') || 'zh-TW';
+    if (!I18N[currentLang]) currentLang = 'zh-TW';
+    const t = key => (I18N[currentLang] && I18N[currentLang][key]) || I18N['zh-TW'][key] || key;
+
+    function setLanguage(lang) {
+      if (!I18N[lang]) return;
+      currentLang = lang;
+      localStorage.setItem('mindnote_lang', lang);
+      document.documentElement.lang = lang;
+      applyStaticI18n();
+      renderCurrentView();
+      requestAnimationFrame(() => updateNavIndicator(true));
+    }
+
+    function applyStaticI18n() {
+      document.documentElement.lang = currentLang;
+      document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
+      document.querySelectorAll('#sidebarLangGroup button').forEach(b => b.classList.toggle('active', b.dataset.lang === currentLang));
+      $('quickPromptInput').placeholder = t('quickPh');
+      $('aiModalPromptInput').placeholder = t('aiFillPh');
+      $('aiFillBtn').innerHTML = `${ICON.spark}<span>${t('aiFillBtn')}</span>`;
+      $('formTitle').placeholder = t('formTitlePh');
+      $('formContent').placeholder = t('formContentPh');
+      $('formReasonLabel').innerHTML = `${ICON.bulb}<span>${t('formReasonLbl')}</span>`;
+      $('formReason').placeholder = t('formReasonPh');
+      $('formStepsLabel').textContent = t('formStepsLbl');
+      $('formSteps').placeholder = t('formStepsPh');
+      $('formDueLabel').textContent = t('formDueLbl');
+      $('formTagsLabel').textContent = t('formTagsLbl');
+      $('formCancelBtn').textContent = t('cancel');
+      $('formSaveBtn').textContent = t('save');
+      $('sprintBadge').innerHTML = `${ICON.timer}<span>${t('sprint15')}</span>`;
+      $('sprintHint').textContent = t('sprintHint');
+      $('sprintResetBtn').textContent = t('sprintReset');
+      $('confirmCancelBtn').textContent = t('cancel');
+    }
+
+    // ==========================================
+    // 1. Utilities & State (Plan A: academic & memo)
+    // ==========================================
+    const $ = id => document.getElementById(id);
+    const pad = n => String(n).padStart(2, '0');
+    const ymd = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+    const todayStr = () => ymd(new Date());
+    const getRelativeDateStr = offset => { const d = new Date(); d.setDate(d.getDate() + offset); return ymd(d); };
+    const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const uid = (p = 'id') => `${p}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`;
+    const haptic = (ms = 10) => { try { navigator.vibrate && navigator.vibrate(ms); } catch (e) {} };
+    function daysUntil(due) {
+      if (!due || typeof due !== 'string') return null;
+      const n = new Date(); n.setHours(0, 0, 0, 0);
+      const d = new Date(due + 'T00:00:00');
+      return Number.isNaN(d.getTime()) ? null : Math.round((d - n) / 86400000);
+    }
+
+    // 1.5px Geometric Linear SVG Icon Set
+    const ICON = {
+      star: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8-6.2-3.2L5.8 21 7 14.2 2 9.3l6.9-1z"/></svg>',
+      check: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>',
+      spark: '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c.6 4.9 4.1 9 9 10-4.9.6-9 4.1-10 9-.6-4.9-4.1-9-9-10 4.9-.6 9-4.1 10-9z"/></svg>',
+      spinner: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="animation:spin .8s linear infinite"><path d="M21 12a9 9 0 1 1-6.2-8.6"/></svg>',
+      chevL: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>',
+      chevR: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>',
+      search: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>',
+      academic: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10 12 5 2 10l10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5M22 10v6"/></svg>',
+      memo: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17v5"/><path d="M7.5 4h9l-1.2 5.2 2.4 2.8a1 1 0 0 1-.76 1.65H7.06a1 1 0 0 1-.76-1.65l2.4-2.8L7.5 4Z"/></svg>',
+      statSun: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M4.93 4.93l1.56 1.56M17.51 17.51l1.56 1.56M2.5 12h2.2M19.3 12h2.2M4.93 19.07l1.56-1.56M17.51 6.49l1.56-1.56"/></svg>',
+      statAlert: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5"/><circle cx="12" cy="16.2" r=".8" fill="currentColor" stroke="none"/></svg>',
+      statPin: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17v5"/><path d="M7.5 4h9l-1.2 5.2 2.4 2.8a1 1 0 0 1-.76 1.65H7.06a1 1 0 0 1-.76-1.65l2.4-2.8L7.5 4Z"/></svg>',
+      statDone: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11.5a8 8 0 1 1-4.2-7.05"/><path d="m8.8 12.2 2.4 2.4 6.3-6.6"/><path d="M19.5 3.5v2M18.5 4.5h2"/></svg>',
+      timer: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 1.5M9.5 2h5"/></svg>',
+      edit: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 1 1 3 3L7 19l-4 1 1-4Z"/></svg>',
+      trash: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>',
+      wand: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 4 5 5-11 11H4v-5L15 4Z"/><path d="m12 7 5 5"/></svg>',
+      bulb: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1V18h6v-1.2c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2Z"/></svg>',
+      globe: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>',
+      database: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.66 3.58 3 8 3s8-1.34 8-3V5"/><path d="M4 12c0 1.66 3.58 3 8 3s8-1.34 8-3"/></svg>',
+      emptyHorizon: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v2M5.6 7.6l1.4 1.4M18.4 7.6 17 9M3 16h18M7 16a5 5 0 0 1 10 0"/></svg>',
+      emptyTray: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13h5l2 3h4l2-3h5"/><path d="M5.4 5h13.2L21 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-6L5.4 5Z"/></svg>',
+      emptyLeaf: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19c2-7 7-12 14-14-1 7-6 12-14 14Z"/><path d="M5 19c4-4 8-7 12-9"/></svg>'
+    };
+
+    const DEFAULT_NOTES = [
+      {
+        id: 'note-1', type: 'academic', title: '完成分子生物學作業（第3章）',
+        content: '詳讀 DNA 轉錄與 RNA 剪接機制重點，整理剪接突變圖表。',
+        createdAt: new Date(Date.now() - 3600000 * 5).toISOString(), dueDate: getRelativeDateStr(1),
+        starred: true, completed: false, tags: ['#生物', '#分子生物'],
+        reason: '紮實掌握分子生物學概念是進入實驗室的核心基底。',
+        steps: [
+          { id: 's1', text: '打開講義 PDF 翻到第 3 章第一頁', completed: false },
+          { id: 's2', text: '劃出轉錄因子核心結合序列重點', completed: false },
+          { id: 's3', text: '完成課後習題 1~3 題', completed: false }
+        ]
+      },
+      {
+        id: 'note-2', type: 'memo', title: '實驗室郵件回覆',
+        content: '回覆教授關於週四 PCR 實驗排程的時間確認。',
+        createdAt: new Date(Date.now() - 3600000 * 2).toISOString(), dueDate: getRelativeDateStr(0),
+        starred: true, completed: false, tags: ['#實驗室', '#通訊'],
+        reason: '及時確認排程，避免佔用整天背景記憶。',
+        steps: [
+          { id: 's21', text: '點開收件匣確認週四下午 2:00 空檔', completed: false }
+        ]
+      },
+      {
+        id: 'note-3', type: 'memo', title: '健身訓練 (18:00)',
+        content: '胸肩與核心訓練，完成 3 組臥推與 15 分鐘划船機有氧。',
+        createdAt: new Date(Date.now() - 3600000 * 8).toISOString(), dueDate: getRelativeDateStr(0),
+        starred: false, completed: false, tags: ['#健身', '#習慣'],
+        reason: '運動能有效緩解長時間讀書造成的專注力疲乏。',
+        steps: [
+          { id: 's31', text: '換上運動鞋並裝滿水壺', completed: false },
+          { id: 's32', text: '動態伸展暖身 5 分鐘', completed: false }
+        ]
+      },
+      {
+        id: 'note-4', type: 'academic', title: '準備下週論文簡報',
+        content: '整理論文《Single-cell RNA sequencing》，製作 10 頁投影片。',
+        createdAt: new Date(Date.now() - 3600000 * 24).toISOString(), dueDate: getRelativeDateStr(10),
+        starred: false, completed: false, tags: ['#簡報', '#學術'],
+        reason: '提前完成能有充裕時間預演。',
+        steps: [
+          { id: 's41', text: '開投影片打下首頁標題', completed: false },
+          { id: 's42', text: '列出 3 個核心研究問題大綱', completed: false }
+        ]
+      }
+    ];
+
+    const cloneDefaults = () => JSON.parse(JSON.stringify(DEFAULT_NOTES));
+    function normalizeNote(n) {
+      const safeId = String(n?.id || uid('note')).replace(/[^a-zA-Z0-9_-]/g, '') || uid('note');
+      // Migrate legacy 'flow' notes smoothly into 'memo'
+      const mappedType = n?.type === 'academic' ? 'academic' : 'memo';
+      return {
+        id: safeId, type: mappedType,
+        title: String(n?.title || 'Untitled'),
+        content: String(n?.content || ''),
+        createdAt: n?.createdAt || new Date().toISOString(),
+        dueDate: n?.dueDate || '',
+        starred: Boolean(n?.starred),
+        completed: Boolean(n?.completed),
+        reason: String(n?.reason || ''),
+        tags: Array.isArray(n?.tags) ? n.tags.map(String) : [],
+        steps: Array.isArray(n?.steps) ? n.steps.map(s => ({
+          id: String(s?.id || uid('s')).replace(/[^a-zA-Z0-9_-]/g, '') || uid('s'),
+          text: String(s?.text || ''),
+          completed: Boolean(s?.completed)
+        })) : []
+      };
+    }
+
+    let notes = [];
+    try {
+      const saved = localStorage.getItem('mindnote_notes_v2');
+      const parsed = saved ? JSON.parse(saved) : cloneDefaults();
+      notes = (Array.isArray(parsed) ? parsed : cloneDefaults()).filter(n => n && !n.isOptimistic).map(normalizeNote);
+    } catch (e) { notes = cloneDefaults(); }
+
+    function saveState() {
+      try { localStorage.setItem('mindnote_notes_v2', JSON.stringify(notes.filter(n => !n.isOptimistic))); }
+      catch (e) { showToast('⚠️ Storage full, please export backup'); }
+      renderCurrentView();
+    }
+
+    // ==========================================
+    // 2. Motion: Enhanced Ripple, Particles, Audio, Toast, Confirm
+    // ==========================================
+    let lastPointer = { x: innerWidth / 2, y: innerHeight / 2 };
+    const RIPPLE_SEL = '.btn, .icon-btn, .nav-item, .card, .fchip, .list-item, .check-pill, .step-row, .cal-cell, .fab, .rp';
+    document.addEventListener('pointerdown', e => {
+      lastPointer = { x: e.clientX, y: e.clientY };
+      const el = e.target.closest(RIPPLE_SEL);
+      if (!el || el.disabled) return;
+      const r = el.getBoundingClientRect();
+      const size = Math.max(r.width, r.height) * 2.4;
+      const w = document.createElement('span');
+      w.className = 'ripple-wave';
+      w.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX - r.left - size / 2}px;top:${e.clientY - r.top - size / 2}px`;
+      el.appendChild(w);
+      w.addEventListener('animationend', () => w.remove());
+    }, { passive: true });
+
+    function burst(x = lastPointer.x, y = lastPointer.y) {
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      const colors = ['#4285F4', '#EA4335', '#FBBC04', '#34A853', '#9B72CB'];
+      for (let i = 0; i < 16; i++) {
+        const p = document.createElement('span');
+        p.className = 'particle';
+        p.style.background = colors[i % colors.length];
+        p.style.left = x + 'px'; p.style.top = y + 'px';
+        document.body.appendChild(p);
+        const a = (Math.PI * 2 * i) / 16 + Math.random() * 0.4;
+        const dist = 40 + Math.random() * 60;
+        p.animate([
+          { transform: 'translate(-50%,-50%) scale(1)', opacity: 1 },
+          { transform: `translate(calc(-50% + ${Math.cos(a) * dist}px), calc(-50% + ${Math.sin(a) * dist + 20}px)) scale(.2)`, opacity: 0 }
+        ], { duration: 700, easing: 'cubic-bezier(.2,0,0,1)' }).onfinish = () => p.remove();
+      }
+    }
+
+    let audioCtx = null;
+    function tone(freq, start, dur, vol) {
+      try {
+        if (!audioCtx) { const A = window.AudioContext || window.webkitAudioContext; if (A) audioCtx = new A(); }
+        if (!audioCtx) return;
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const tm = audioCtx.currentTime + start;
+        const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+        o.type = 'sine'; o.frequency.setValueAtTime(freq, tm);
+        g.gain.setValueAtTime(0, tm); g.gain.linearRampToValueAtTime(vol, tm + 0.03);
+        g.gain.exponentialRampToValueAtTime(0.001, tm + dur);
+        o.connect(g); g.connect(audioCtx.destination); o.start(tm); o.stop(tm + dur);
+      } catch (e) {}
+    }
+    const playSuccessChime = () => { tone(587.33, 0, .85, .16); tone(880, .12, 1.0, .18); };
+    const playTickChime = () => tone(880, 0, .09, .09);
+
+    let toastTimer = null;
+    function showToast(msg) {
+      const el = $('appToast');
+      el.textContent = msg;
+      el.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => el.classList.remove('show'), 3200);
+    }
+
+    let confirmResolver = null;
+    function askConfirm(title, message, okLabel = t('ok')) {
+      $('confirmTitle').textContent = title;
+      $('confirmMessage').textContent = message;
+      $('confirmOkBtn').textContent = okLabel;
+      openModal('confirmModal');
+      return new Promise(resolve => { confirmResolver = resolve; });
+    }
+    function resolveConfirm(res) {
+      closeModal('confirmModal');
+      if (confirmResolver) { const fn = confirmResolver; confirmResolver = null; fn(res); }
+    }
+
+    // ==========================================
+    // 3. Navigation, Sort & Batch State
+    // ==========================================
+    let currentTab = 'home';
+    let flowSort = localStorage.getItem('mindnote_sort') || '7days';
+    let quickSelectedType = 'auto';
+    let editingNoteId = null;
+    let isBatchMode = false;
+    let selectedNoteIds = new Set();
+    let currentViewIds = [];
+    let animateNext = true;
+
+    // Ask Gemini Recommendation State
+    let aiPickResult = null; // { id, reason }
+    let isAskingGemini = false;
+
+    function setFlowSort(val) {
+      flowSort = val;
+      localStorage.setItem('mindnote_sort', val);
+      renderCurrentView();
+    }
+
+    function toggleBatchMode() { isBatchMode = !isBatchMode; selectedNoteIds.clear(); renderCurrentView(); }
+    function toggleSelectNote(id, e) { if (e) e.stopPropagation(); selectedNoteIds.has(id) ? selectedNoteIds.delete(id) : selectedNoteIds.add(id); haptic(6); renderCurrentView(); }
+    function selectAllCurrentNotes() {
+      const ids = currentViewIds.filter(id => !String(id).startsWith('temp-'));
+      selectedNoteIds = selectedNoteIds.size === ids.length ? new Set() : new Set(ids);
+      renderCurrentView();
+    }
+    async function deleteBatchSelected() {
+      if (!selectedNoteIds.size) return;
+      const c = selectedNoteIds.size;
+      if (!(await askConfirm(t('deleteSel'), `${t('deleteSel')} ${c}?`, `${t('deleteSel')} (${c})`))) return;
+      notes = notes.filter(n => !selectedNoteIds.has(n.id));
+      selectedNoteIds.clear();
+      saveState();
+      showToast(`🗑 -${c}`);
+    }
+    async function deleteNote(id) {
+      const n = notes.find(x => x.id === id);
+      if (!n || !(await askConfirm(t('del'), `「${n.title}」?`, t('del')))) return;
+      notes = notes.filter(x => x.id !== id);
+      if (aiPickResult?.id === id) aiPickResult = null;
+      closeLightboxModal();
+      saveState();
+    }
+
+    function updateNavIndicator(instant = false) {
+      const rail = $('navRail');
+      const ind = $('navIndicator');
+      if (!rail || !ind) return;
+      const active = rail.querySelector('.nav-item.active');
+      if (!active) { ind.style.opacity = '0'; return; }
+      if (instant) ind.style.transition = 'none';
+      ind.dataset.tab = active.dataset.tab || 'home';
+      ind.style.width = `${active.offsetWidth}px`;
+      ind.style.height = `${active.offsetHeight}px`;
+      ind.style.transform = `translate3d(${active.offsetLeft}px, ${active.offsetTop}px, 0)`;
+      ind.style.opacity = '1';
+      if (instant) {
+        ind.getBoundingClientRect();
+        ind.style.transition = '';
+      }
+    }
+
+    function switchNavTab(tab) {
+      currentTab = tab; isBatchMode = false; selectedNoteIds.clear();
+      document.querySelectorAll('.nav-item').forEach(el => el.classList.toggle('active', el.dataset.tab === tab));
+      updateNavIndicator();
+      animateNext = true;
+      renderCurrentView();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function toggleSidebar() {
+      const s = $('sidebar');
+      s.classList.toggle('collapsed');
+      localStorage.setItem('mindnote_sidebar_collapsed', s.classList.contains('collapsed') ? '1' : '0');
+      requestAnimationFrame(() => updateNavIndicator());
+      setTimeout(() => updateNavIndicator(), 420);
+    }
+    if (localStorage.getItem('mindnote_sidebar_collapsed') === '1') $('sidebar').classList.add('collapsed');
+
+    function setQuickType(type) {
+      quickSelectedType = type;
+      document.querySelectorAll('#quickTypeSelector .fchip').forEach(b => b.classList.toggle('selected', b.dataset.type === type));
+    }
+
+    function updateNavCounts() {
+      const pending = notes.filter(n => !n.completed && !n.isOptimistic);
+      document.querySelectorAll('[data-count]').forEach(el => {
+        const k = el.dataset.count;
+        const c = k === 'home' ? pending.filter(n => { const d = daysUntil(n.dueDate); return d !== null && d <= 7; }).length
+                               : pending.filter(n => n.type === k).length;
+        el.textContent = c || '';
+      });
+    }
+
+    // ==========================================
+    // 4. Hybrid AI Engine (0-Token Filter + Gemini 3.8 Flash + Timeout)
+    // ==========================================
+    const DEFAULT_MODEL = 'gemini-3.8-flash';
+    const getStoredGeminiKey = () => localStorage.getItem('mindnote_gemini_api_key') || '';
+    const getStoredModel = () => localStorage.getItem('mindnote_gemini_model') || DEFAULT_MODEL;
+
+    async function callGeminiRaw(promptText, maxTokens = 380) {
+      const apiKey = getStoredGeminiKey();
+      if (!apiKey) return null;
+      const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(getStoredModel())}:generateContent`;
+      const payload = {
+        contents: [{ parts: [{ text: promptText }] }],
+        generationConfig: { temperature: 0.2, maxOutputTokens: maxTokens, thinkingConfig: { thinkingBudget: 0 }, responseMimeType: 'application/json' }
+      };
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 10000);
+      const doFetch = () => fetch(endpoint, {
+        method: 'POST', signal: controller.signal,
+        headers: { 'Content-Type': 'application/json', 'x-goog-api-key': apiKey },
+        body: JSON.stringify(payload)
+      });
+      try {
+        let res = await doFetch();
+        if (!res.ok && res.status === 400) { delete payload.generationConfig.thinkingConfig; res = await doFetch(); }
+        if (!res.ok) return null;
+        const data = await res.json();
+        const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+        return text ? JSON.parse(text.replace(/^```json\s*|```$/g, '').trim()) : null;
+      } catch (e) { return null; }
+      finally { clearTimeout(timer); }
+    }
+
+    function parseDueOffset(q) {
+      if (/今天|今晚|今早|today/i.test(q)) return 0;
+      if (/後天|后天/.test(q)) return 2;
+      if (/明天|明早|tomorrow/i.test(q)) return 1;
+      const wk = q.match(/(下|這|这|本)?(週|周|星期|禮拜|礼拜)([一二三四五六日天])/);
+      if (wk) {
+        const map = { 日: 0, 天: 0, 一: 1, 二: 2, 三: 3, 四: 4, 五: 5, 六: 6 };
+        let diff = (map[wk[3]] - new Date().getDay() + 7) % 7;
+        if (wk[1] === '下') diff += 7; else if (diff === 0) diff = 7;
+        return diff;
+      }
+      if (/下週|下周|next week/i.test(q)) return 7;
+      return 0;
+    }
+
+    // 0-Token Short-Task Detection
+    function isSimpleShortTask(q) {
+      const clean = q.trim();
+      const hasComplexCue = /期中|期末|報告|报告|論文|论文|paper|簡報|简报|專案|项目|計劃|计划|研究|複習|复习|實驗|实验|exam|essay|project/i.test(clean);
+      return clean.length <= 9 && !hasComplexCue;
+    }
+
+    function localRuleEnginePlan(rawInput) {
+      const q = rawInput.trim();
+      const isAcad = /期中|期末|考|作業|作业|報告|报告|論文|论文|paper|研究|課|课|講義|讲义|生物|化學|化学|程式|實驗|实验|exam|study/i.test(q);
+      const type = isAcad ? 'academic' : 'memo';
+      let title = q.replace(/(今天|明天|後天|后天|今晚|明早|早上|下午|晚上|(下|這|这|本)?(週|周|星期|禮拜|礼拜)[一二三四五六日天]|下週|下周|之前|前)/g, '').trim() || q;
+      if (title.length > 22) title = title.slice(0, 21) + '…';
+      return {
+        type, title, content: '', reason: '',
+        dueDate: getRelativeDateStr(parseDueOffset(q)),
+        tags: [isAcad ? (currentLang === 'en' ? '#Academic' : '#學術') : (currentLang === 'en' ? '#Memo' : '#備忘')],
+        steps: []
+      };
+    }
+
+    async function smartPlanTask(rawInput, forceAi = false) {
+      if (!forceAi && isSimpleShortTask(rawInput)) {
+        return { ...localRuleEnginePlan(rawInput), usedAi: false };
+      }
+      const prompt = `Today is ${todayStr()}. ${t('aiLangInstruction')} Convert "${rawInput}" to JSON: {"category":"academic|memo","clean_title":"concise action title without date words","detail":"optional 1-sentence note not repeating title","days":integer days from today,"steps":["step1","step2","step3"],"why":"short motivation","tags":["#tag"]}. Only output JSON.`;
+      const p = await callGeminiRaw(prompt, 360);
+      if (!p) return { ...localRuleEnginePlan(rawInput), usedAi: false };
+      const type = p.category === 'academic' ? 'academic' : 'memo';
+      const days = Number.isFinite(+p.days) ? Math.max(0, Math.round(+p.days)) : parseDueOffset(rawInput);
+      return {
+        usedAi: true, type,
+        title: p.clean_title || rawInput.slice(0, 20),
+        content: (p.detail && p.detail !== p.clean_title) ? p.detail : '',
+        reason: p.why || '',
+        dueDate: getRelativeDateStr(days),
+        steps: (p.steps || []).slice(0, 5).map(s => ({ id: uid('s'), text: String(s), completed: false })),
+        tags: Array.isArray(p.tags) && p.tags.length ? p.tags.map(x => String(x).startsWith('#') ? String(x) : '#' + x).slice(0, 3) : []
+      };
+    }
+
+    async function executeAiQuickCapture() {
+      const input = $('quickPromptInput');
+      const val = input.value.trim();
+      const btn = $('aiPlanBtn');
+      if (!val || btn.disabled) { if (!val) input.focus(); return; }
+
+      // Fast 0-token path for simple short tasks
+      if (isSimpleShortTask(val) || !getStoredGeminiKey()) {
+        const p = localRuleEnginePlan(val);
+        if (quickSelectedType !== 'auto') p.type = quickSelectedType;
+        notes.unshift({ id: uid('note'), ...p, createdAt: new Date().toISOString(), completed: false, starred: false });
+        input.value = '';
+        saveState(); playTickChime();
+        showToast(`⚡ ${p.title} (0 Token)`);
+        return;
+      }
+
+      const orig = btn.innerHTML;
+      input.readOnly = true; $('promptBar').classList.add('is-thinking');
+      btn.disabled = true; btn.innerHTML = `${ICON.spinner}<span>${t('thinking')}</span>`;
+
+      const tempId = 'temp-' + Date.now();
+      notes.unshift({ id: tempId, type: quickSelectedType === 'auto' ? 'memo' : quickSelectedType, title: val.slice(0, 22), completed: false, tags: [], steps: [], isOptimistic: true });
+      renderCurrentView();
+
+      try {
+        const p = await smartPlanTask(val, true);
+        if (quickSelectedType !== 'auto') p.type = quickSelectedType;
+        const finalNote = { id: uid('note'), type: p.type, title: p.title, content: p.content, reason: p.reason, createdAt: new Date().toISOString(), dueDate: p.dueDate, completed: false, starred: false, tags: p.tags, steps: p.steps };
+        const idx = notes.findIndex(n => n.id === tempId);
+        if (idx !== -1) notes[idx] = finalNote; else notes.unshift(finalNote);
+        input.value = '';
+        saveState(); playSuccessChime();
+        showToast(`✨ ${finalNote.title}`);
+      } finally {
+        const hadTemp = notes.some(n => n.id === tempId);
+        if (hadTemp) {
+          notes = notes.filter(n => n.id !== tempId);
+          renderCurrentView();
+        }
+        input.readOnly = false; $('promptBar').classList.remove('is-thinking');
+        btn.disabled = false; btn.innerHTML = orig; input.focus();
+      }
+    }
+
+    // Chrome-style "Ask Gemini" to pick 1 task right now
+    async function askGeminiWhatToDo() {
+      const pending = notes.filter(n => !n.completed && !n.isOptimistic);
+      if (!pending.length) { showToast(t('emptyFlow')); return; }
+      isAskingGemini = true;
+      renderCurrentView();
+
+      const nowTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+      const summary = pending.slice(0, 12).map(n => ({ id: n.id, title: n.title, cat: n.type, due: n.dueDate || 'none', starred: n.starred, stepsLeft: (n.steps || []).filter(s => !s.completed).length }));
+      const prompt = `Current local time: ${nowTime}, Date: ${todayStr()}. ${t('aiLangInstruction')} User has ADHD and doesn't know what to start right now. Pick the SINGLE best task from this list: ${JSON.stringify(summary)}. Return JSON ONLY: {"id":"chosen_id","reason":"1 short warm practical sentence explaining why do this right now"}.`;
+
+      const res = await callGeminiRaw(prompt, 180);
+      isAskingGemini = false;
+      if (res && pending.some(n => n.id === res.id)) {
+        aiPickResult = { id: res.id, reason: res.reason };
+      } else {
+        // Offline smart fallback
+        const best = sortNotes(pending, 'due')[0];
+        aiPickResult = {
+          id: best.id,
+          reason: currentLang === 'en'
+            ? `Start with "${best.title}" — it's your closest priority right now.`
+            : currentLang === 'zh-CN'
+              ? `先动手「${best.title}」吧，这是目前时间最紧迫的一件事，解决掉会轻松很多。`
+              : `先動手「${best.title}」吧，這是目前時間最緊迫的一件事，解決掉會輕鬆很多。`
+        };
+      }
+      playTickChime();
+      renderCurrentView();
+    }
+
+    // ==========================================
+    // 5. Interactive AI Step Co-pilot inside Lightbox
+    // ==========================================
+    let copilotState = null; // { noteId, targetStepId|null, drafts: string[], loading: boolean }
+
+    async function openAiStepCopilot(noteId, targetStepId = null, feedback = '') {
+      const note = notes.find(n => n.id === noteId);
+      if (!note) return;
+      const targetStep = targetStepId ? (note.steps || []).find(s => s.id === targetStepId) : null;
+      copilotState = { noteId, targetStepId, drafts: copilotState?.drafts || [], loading: true };
+      renderLightboxCopilot();
+
+      const baseContext = targetStep
+        ? `Break down this single step "${targetStep.text}" (from task "${note.title}") into 2-4 tiny concrete sub-steps.`
+        : `Generate 3-5 concrete, actionable checklist steps for task "${note.title}" (${note.content || ''}).`;
+      const refineNote = feedback ? ` User feedback on previous draft (${JSON.stringify(copilotState.drafts)}): "${feedback}". Adjust accordingly.` : '';
+      const prompt = `${t('aiLangInstruction')} ${baseContext}${refineNote} Return JSON ONLY: {"steps":["step1","step2","step3"]}.`;
+
+      const res = await callGeminiRaw(prompt, 320);
+      if (res && Array.isArray(res.steps) && res.steps.length) {
+        copilotState.drafts = res.steps.map(String);
+      } else {
+        const label = targetStep ? targetStep.text : note.title;
+        copilotState.drafts = currentLang === 'en'
+          ? [`Open materials for "${label}"`, `Draft first 20% quickly`, `Review & wrap up`]
+          : currentLang === 'zh-CN'
+            ? [`打开「${label}」需要的档案或讲义`, `先完成最简单的前 20% 内容`, `检查重点并收尾`]
+            : [`打開「${label}」需要的檔案或講義`, `先完成最簡單的前 20% 內容`, `檢查重點並收尾`];
+      }
+      copilotState.loading = false;
+      renderLightboxCopilot();
+    }
+
+    function renderLightboxCopilot() {
+      const box = $('lightboxCopilotArea');
+      if (!box) return;
+      if (!copilotState) { box.innerHTML = ''; return; }
+      if (copilotState.loading) {
+        box.innerHTML = `<div class="ai-copilot-box row gap8">${ICON.spinner}<span>${t('thinking')}…</span></div>`;
+        return;
+      }
+      box.innerHTML = `
+        <div class="ai-copilot-box">
+          <div class="row" style="justify-content:space-between; margin-bottom:10px;">
+            <span class="row gap6" style="font-size:13px; font-weight:700; color:#0B57D0;">${ICON.spark}<span>${t('copilotTitle')}</span></span>
+            <button class="icon-btn sm" onclick="copilotState=null; renderLightboxCopilot();">✕</button>
+          </div>
+          <div class="list" style="margin-bottom:10px;">
+            ${copilotState.drafts.map((d, idx) => `
+              <div class="ai-draft-item">
+                <span style="color:var(--primary); font-weight:700; font-size:12px; font-variant-numeric:tabular-nums;">${idx + 1}.</span>
+                <input value="${esc(d)}" oninput="copilotState.drafts[${idx}]=this.value">
+                <button class="icon-btn sm" onclick="copilotState.drafts.splice(${idx},1); renderLightboxCopilot();">✕</button>
+              </div>`).join('')}
+          </div>
+          <div class="row gap6" style="margin-bottom:10px;">
+            <input id="copilotFeedbackInput" class="modal-input" style="margin:0; height:36px; font-size:13px;" placeholder="${t('copilotPh')}"
+                   onkeydown="if(event.key==='Enter' && !event.isComposing) refineCopilotDrafts()">
+            <button class="btn btn-outlined sm" onclick="refineCopilotDrafts()">${t('copilotRefine')}</button>
+          </div>
+          <div class="row gap8" style="justify-content:flex-end;">
+            <button class="btn btn-text sm" onclick="copilotState=null; renderLightboxCopilot();">${t('cancel')}</button>
+            <button class="btn btn-filled sm" onclick="adoptCopilotDrafts()">${ICON.check}<span>${t('copilotAdopt')}</span></button>
+          </div>
+        </div>`;
+    }
+
+    function refineCopilotDrafts() {
+      const fb = $('copilotFeedbackInput')?.value.trim();
+      if (!copilotState) return;
+      openAiStepCopilot(copilotState.noteId, copilotState.targetStepId, fb || 'Make it clearer and easier to start');
+    }
+
+    function adoptCopilotDrafts() {
+      if (!copilotState) return;
+      const { noteId, targetStepId, drafts } = copilotState;
+      const clean = drafts.map(s => s.trim()).filter(Boolean).map(text => ({ id: uid('s'), text, completed: false }));
+      if (!clean.length) return;
+      notes = notes.map(n => {
+        if (n.id !== noteId) return n;
+        const old = n.steps || [];
+        if (targetStepId) {
+          const idx = old.findIndex(s => s.id === targetStepId);
+          if (idx !== -1) {
+            const next = [...old];
+            next.splice(idx, 1, ...clean);
+            return { ...n, steps: next };
+          }
+        }
+        return { ...n, steps: [...old, ...clean] };
+      });
+      copilotState = null;
+      saveState(); playSuccessChime();
+      openLightboxModal(noteId);
+    }
+
+    // ==========================================
+    // 6. Voice Input
+    // ==========================================
+    let isListening = false, recognitionInstance = null;
+    function setVoiceUi(on) { const b = $('voiceBtn'); b.style.background = on ? 'var(--academic-bg)' : ''; b.style.color = on ? 'var(--academic)' : ''; }
+    function toggleVoiceInput() {
+      const R = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!R) { showToast('Browser does not support SpeechRecognition'); return; }
+      if (isListening && recognitionInstance) { recognitionInstance.stop(); return; }
+      try {
+        recognitionInstance = new R();
+        recognitionInstance.continuous = true; recognitionInstance.interimResults = true;
+        recognitionInstance.lang = currentLang === 'en' ? 'en-US' : currentLang;
+        recognitionInstance.onstart = () => { isListening = true; setVoiceUi(true); haptic(15); showToast('🎤 Listening…'); };
+        recognitionInstance.onresult = e => {
+          let txt = '';
+          for (let i = e.resultIndex; i < e.results.length; i++) if (e.results[i].isFinal) txt += e.results[i][0].transcript;
+          if (txt) { const inp = $('quickPromptInput'); inp.value = (inp.value ? inp.value + ' ' : '') + txt; }
+        };
+        recognitionInstance.onerror = recognitionInstance.onend = () => { isListening = false; setVoiceUi(false); };
+        recognitionInstance.start();
+      } catch (e) { showToast('Microphone permission denied'); }
+    }
+
+    // ==========================================
+    // 7. Rendering Helpers & Sorting
+    // ==========================================
+    const catLabel = (type, full = false) => type === 'academic' ? t(full ? 'catAcademic' : 'academicShort') : t(full ? 'catMemo' : 'memoShort');
+    const catChip = (type, full = false) => `<span class="cat-badge cat-${type}"><span class="laser-dot"></span><span>${catLabel(type, full)}</span></span>`;
+
+    function getDueBadgeHtml(dueDate) {
+      const d = daysUntil(dueDate);
+      if (d === null) return '';
+      if (d < 0) return `<span class="chip due-over">${t('dueOver')(-d)}</span>`;
+      if (d === 0) return `<span class="chip due-today">${t('dueToday')}</span>`;
+      if (d === 1) return `<span class="chip due-tmr">${t('dueTmr')}</span>`;
+      return `<span class="chip due-later">${t('dueLater')(d)}</span>`;
+    }
+
+    function stepProgressHtml(n) {
+      if (!n.steps?.length) return '';
+      const done = n.steps.filter(s => s.completed).length;
+      return `<div><div class="progress-label"><span>${t('stepProgress')}</span><span>${done}/${n.steps.length}</span></div>
+              <div class="progress"><i style="width:${Math.round(done / n.steps.length * 100)}%"></i></div></div>`;
+    }
+
+    function batchToolbarHtml() {
+      if (!isBatchMode) return `<button class="btn btn-outlined sm" onclick="toggleBatchMode()">${ICON.edit}<span>${t('batchEdit')}</span></button>`;
+      const ids = currentViewIds.filter(id => !String(id).startsWith('temp-'));
+      const allSel = ids.length > 0 && selectedNoteIds.size === ids.length;
+      return `
+        <button class="btn btn-text sm" onclick="selectAllCurrentNotes()">${allSel ? t('unselectAll') : t('selectAll')}</button>
+        <button class="btn btn-danger sm" onclick="deleteBatchSelected()" ${!selectedNoteIds.size ? 'disabled' : ''}>${ICON.trash}<span>${t('deleteSel')} (${selectedNoteIds.size})</span></button>
+        <button class="btn btn-filled sm" onclick="toggleBatchMode()">${t('done')}</button>`;
+    }
+
+    function sortNotes(list, mode = 'due') {
+      return [...list].sort((a, b) => {
+        if (a.isOptimistic) return -1; if (b.isOptimistic) return 1;
+        if (a.completed !== b.completed) return a.completed ? 1 : -1;
+        if (mode === 'starred') {
+          if (a.starred !== b.starred) return b.starred ? 1 : -1;
+        } else if (mode === 'newest') {
+          return new Date(b.createdAt) - new Date(a.createdAt);
+        }
+        const da = daysUntil(a.dueDate), db = daysUntil(b.dueDate);
+        const va = da === null ? 9999 : da, vb = db === null ? 9999 : db;
+        if (va !== vb) return va - vb;
+        return (b.starred ? 1 : 0) - (a.starred ? 1 : 0);
+      });
+    }
+
+    function renderCompactCardHtml(n, i = 0) {
+      if (n.isOptimistic) {
+        return `<article class="card thinking" style="--i:${i}">
+          <div class="card-top"><span class="cat-badge cat-auto">${ICON.spinner}<span>${t('thinking')}</span></span></div>
+          <h3 class="card-title" style="color:#5B3E96;">${esc(n.title)}</h3>
+          <div class="shimmer" style="width:90%"></div><div class="shimmer" style="width:65%"></div>
+        </article>`;
+      }
+      const sel = selectedNoteIds.has(n.id);
+      const picked = aiPickResult?.id === n.id;
+      const hasContent = n.content && n.content.trim() !== n.title.trim();
+      return `
+        <article class="card cat-${n.type} ${sel ? 'batch-selected' : ''} ${n.completed ? 'is-done' : ''} ${picked ? 'ai-picked' : ''}" style="--i:${i}" onclick="handleCardClick('${esc(n.id)}', event)">
+          <div class="card-top">
+            <div class="row gap8">
+              ${isBatchMode ? `<label class="round-check" style="--c:var(--primary)" onclick="event.stopPropagation()"><input type="checkbox" ${sel ? 'checked' : ''} onchange="toggleSelectNote('${esc(n.id)}', event)"><span></span></label>` : ''}
+              ${catChip(n.type)}
+            </div>
+            <div class="row gap6">
+              ${n.completed ? '' : getDueBadgeHtml(n.dueDate)}
+              <button class="icon-btn sm star-btn ${n.starred ? 'on' : ''}" onclick="event.stopPropagation(); toggleStar('${esc(n.id)}')" style="color:${n.starred ? '#F59E0B' : 'var(--muted)'}">${ICON.star}</button>
+            </div>
+          </div>
+          <h3 class="card-title">${esc(n.title)}</h3>
+          ${hasContent ? `<p class="card-desc">${esc(n.content)}</p>` : ''}
+          ${stepProgressHtml(n)}
+          <div class="card-foot">
+            <div class="card-tags">${(n.tags || []).map(x => `<span class="tag">${esc(x)}</span>`).join('')}</div>
+            <div class="card-actions">
+              ${n.completed ? '' : `<button class="btn btn-text xs" onclick="event.stopPropagation(); openSprintModal('${esc(n.id)}')">${ICON.timer}<span>${t('sprint')}</span></button>`}
+              <button class="check-pill ${n.completed ? 'done' : ''}" onclick="event.stopPropagation(); toggleNoteComplete('${esc(n.id)}')">${ICON.check}<span>${n.completed ? t('completed') : t('done')}</span></button>
+            </div>
+          </div>
+        </article>`;
+    }
+
+    function handleCardClick(id, e) { isBatchMode ? toggleSelectNote(id, e) : openLightboxModal(id); }
+
+    // ==========================================
+    // 8. Views
+    // ==========================================
+    function renderCurrentView() {
+      const c = $('viewArea'); if (!c) return;
+      c.classList.toggle('animate-in', animateNext); animateNext = false;
+      const views = {
+        home: () => renderHomeView(c),
+        academic: () => renderCategoryView(c, 'academic'),
+        memo: () => renderCategoryView(c, 'memo'),
+        calendar: () => renderCalendarView(c),
+        search: () => renderSearchView(c),
+        settings: () => renderSettingsView(c)
+      };
+      (views[currentTab] || views.home)();
+      updateNavCounts();
+    }
+
+    function greeting() {
+      const h = new Date().getHours();
+      if (currentLang === 'en') return h < 12 ? ['Good morning', 'one step at a time'] : h < 18 ? ['Good afternoon', 'keep your rhythm'] : ['Good evening', 'wrap up calmly'];
+      if (currentLang === 'zh-CN') return h < 11 ? ['早安', '先做一件小事就好'] : h < 18 ? ['下午好', '保持你的节奏'] : ['晚上好', '收个漂亮的尾'];
+      return h < 11 ? ['早安', '先做一件小事就好'] : h < 18 ? ['下午好', '保持你的節奏'] : ['晚上好', '收個漂亮的尾'];
+    }
+
+    function renderHomeView(container) {
+      const locale = currentLang === 'en' ? 'en-US' : currentLang;
+      const todayFormatted = new Intl.DateTimeFormat(locale, { month: 'long', day: 'numeric', weekday: 'long' }).format(new Date());
+      const [gHead, gTail] = greeting();
+      const real = notes.filter(n => !n.isOptimistic);
+      const dueToday = real.filter(n => !n.completed && daysUntil(n.dueDate) === 0).length;
+      const overdue = real.filter(n => { const d = daysUntil(n.dueDate); return !n.completed && d !== null && d < 0; }).length;
+      const doneCount = real.filter(n => n.completed).length;
+
+      // Priority Flow Filtering & Sorting (Default: within 7 days)
+      let flowList = notes.filter(n => !n.completed);
+      if (flowSort === '7days') {
+        flowList = flowList.filter(n => { if (n.isOptimistic) return true; const d = daysUntil(n.dueDate); return d === null || d <= 7; });
+      } else if (flowSort === 'today') {
+        flowList = flowList.filter(n => { if (n.isOptimistic) return true; const d = daysUntil(n.dueDate); return d !== null && d <= 0; });
+      }
+      flowList = sortNotes(flowList, flowSort);
+
+      const allSorted = sortNotes(notes, flowSort);
+      currentViewIds = allSorted.map(n => n.id);
+      const pickedNote = aiPickResult ? notes.find(n => n.id === aiPickResult.id && !n.completed) : null;
+
+      container.innerHTML = `
+        <div class="page-head">
+          <div>
+            <div class="eyebrow">${todayFormatted}</div>
+            <h1 class="display"><span class="grad">${gHead}</span>${currentLang === 'en' ? ', ' : '，'}${gTail}</h1>
+          </div>
+          <div class="row gap8 wrap">${batchToolbarHtml()}</div>
+        </div>
+
+        <div class="stat-row">
+          <div class="stat" style="--i:0"><div class="stat-icon tone-amber">${ICON.statSun}</div><div><div class="stat-num">${dueToday}</div><div class="stat-label">${t('statToday')}</div></div></div>
+          <div class="stat" style="--i:1"><div class="stat-icon tone-crimson">${ICON.statAlert}</div><div><div class="stat-num" style="color:${overdue ? 'var(--academic-strong)' : 'inherit'}">${overdue}</div><div class="stat-label">${t('statOver')}</div></div></div>
+          <div class="stat" style="--i:2"><div class="stat-icon tone-azure">${ICON.statPin}</div><div><div class="stat-num">${real.filter(n => !n.completed).length}</div><div class="stat-label">${t('statPending')}</div></div></div>
+          <div class="stat" style="--i:3"><div class="stat-icon tone-emerald">${ICON.statDone}</div><div><div class="stat-num" style="color:var(--green-strong)">${doneCount}</div><div class="stat-label">${t('statDone')}</div></div></div>
+        </div>
+
+        <section class="panel" style="--i:2">
+          <div class="panel-head">
+            <div class="panel-title">
+              <span>${t('priorityFlow')}</span>
+              <span class="hint">(${flowList.length})</span>
+            </div>
+            <div class="row gap8 wrap">
+              <select class="sort-select" onchange="setFlowSort(this.value)">
+                <option value="7days" ${flowSort === '7days' ? 'selected' : ''}>${t('sort7d')}</option>
+                <option value="all" ${flowSort === 'all' ? 'selected' : ''}>${t('sortAll')}</option>
+                <option value="today" ${flowSort === 'today' ? 'selected' : ''}>${t('sortToday')}</option>
+                <option value="due" ${flowSort === 'due' ? 'selected' : ''}>${t('sortDue')}</option>
+                <option value="starred" ${flowSort === 'starred' ? 'selected' : ''}>${t('sortStar')}</option>
+                <option value="newest" ${flowSort === 'newest' ? 'selected' : ''}>${t('sortNew')}</option>
+              </select>
+              <button class="btn btn-ask-gemini sm" onclick="askGeminiWhatToDo()" ${isAskingGemini ? 'disabled' : ''}>
+                ${isAskingGemini ? ICON.spinner : ICON.spark}
+                <span>${isAskingGemini ? t('askingGemini') : t('askGemini')}</span>
+              </button>
+            </div>
+          </div>
+
+          ${pickedNote ? `
+            <div class="gemini-advice-banner">
+              <div class="gemini-advice-text">
+                <b>${ICON.spark} Gemini：</b><span>${esc(aiPickResult.reason)}</span>
+              </div>
+              <div class="row gap6">
+                <button class="btn btn-filled xs" onclick="openLightboxModal('${esc(pickedNote.id)}')">${t('openCard')}</button>
+                <button class="icon-btn sm" onclick="aiPickResult=null; renderCurrentView();">✕</button>
+              </div>
+            </div>` : ''}
+
+          <div class="list">
+            ${!flowList.length ? `<p style="text-align:center; padding:20px; color:var(--muted);">${t('emptyFlow')}</p>` : ''}
+            ${flowList.slice(0, 7).map((n, i) => n.isOptimistic ? `
+              <div class="list-item cat-auto" style="--i:${i}; background:#F6F2FC;">
+                <span style="color:#9B72CB;">${ICON.spinner}</span>
+                <div class="li-main"><div class="li-title" style="color:#5B3E96;">${esc(n.title)}</div></div>
+              </div>` : `
+              <div class="list-item cat-${n.type} ${pickedNote?.id === n.id ? 'ai-picked' : ''}" style="--i:${i}">
+                <label class="round-check" onclick="event.stopPropagation()"><input type="checkbox" onchange="toggleNoteComplete('${esc(n.id)}')"><span></span></label>
+                <div class="li-main" onclick="openLightboxModal('${esc(n.id)}')">
+                  <div class="row gap8" style="min-width:0;">${catChip(n.type)}<span class="meta-sep">·</span><span class="li-title">${esc(n.title)}</span>${getDueBadgeHtml(n.dueDate)}</div>
+                  ${n.steps?.length ? `<div class="li-sub">${t('stepProgress')} ${n.steps.filter(s => s.completed).length}/${n.steps.length}</div>` : ''}
+                </div>
+                <div class="li-actions">
+                  <button class="btn btn-tonal xs" onclick="openSprintModal('${esc(n.id)}')">${ICON.timer}<span>${t('sprint')}</span></button>
+                </div>
+              </div>`).join('')}
+          </div>
+        </section>
+
+        <div class="panel-head">
+          <h2 class="section-title">${t('allNotes')} <span class="hint" style="font-weight:500;">${allSorted.length}</span></h2>
+          <span class="hint">${t('clickHint')}</span>
+        </div>
+        <div class="card-grid">
+          ${allSorted.length ? allSorted.map((n, i) => renderCompactCardHtml(n, i)).join('') : `<div class="empty"><div class="empty-icon">${ICON.emptyHorizon}</div><div>${t('emptyNotes')}</div></div>`}
+        </div>`;
+    }
+
+    function renderCategoryView(container, type) {
+      const filtered = sortNotes(notes.filter(n => n.type === type), 'due');
+      currentViewIds = filtered.map(n => n.id);
+      container.innerHTML = `
+        <div class="page-head">
+          <div class="cat-hero cat-${type}">
+            <div class="cat-hero-icon">${ICON[type]}</div>
+            <div>
+              <h1 class="display">${catLabel(type, true)}</h1>
+              <p class="page-sub">${t(type === 'academic' ? 'catAcademicDesc' : 'catMemoDesc')} · ${filtered.length}</p>
+            </div>
+          </div>
+          <div class="row gap8 wrap">
+            ${batchToolbarHtml()}
+            <button class="btn btn-filled sm" onclick="openNewModalWithType('${type}')">＋ ${t('addBtn')}</button>
+          </div>
+        </div>
+        <div class="card-grid">
+          ${filtered.length ? filtered.map((n, i) => renderCompactCardHtml(n, i)).join('') : `<div class="empty"><div class="empty-icon">${ICON.emptyTray}</div><div>${t('emptyNotes')}</div></div>`}
+        </div>`;
+    }
+
+    // Calendar View
+    let calOffset = 0, calSelected = todayStr();
+    function shiftMonth(d) { calOffset = d === 0 ? 0 : calOffset + d; if (d === 0) calSelected = todayStr(); renderCurrentView(); }
+    function selectCalDay(ds) { calSelected = ds; haptic(6); renderCurrentView(); }
+
+    function renderCalendarView(container) {
+      const base = new Date(); base.setDate(1); base.setMonth(base.getMonth() + calOffset);
+      const y = base.getFullYear(), m = base.getMonth();
+      const firstDay = new Date(y, m, 1).getDay(), totalDays = new Date(y, m + 1, 0).getDate();
+      const tStr = todayStr(), byDate = {};
+      notes.forEach(n => { if (n.dueDate && !n.isOptimistic) (byDate[n.dueDate] = byDate[n.dueDate] || []).push(n); });
+
+      const cells = [];
+      for (let i = 0; i < firstDay; i++) cells.push('<div class="cal-cell empty-cell"></div>');
+      for (let d = 1; d <= totalDays; d++) {
+        const ds = `${y}-${pad(m + 1)}-${pad(d)}`, list = byDate[ds] || [];
+        cells.push(`<button class="cal-cell ${ds === tStr ? 'today' : ''} ${ds === calSelected ? 'selected' : ''}" onclick="selectCalDay('${ds}')">
+          <span class="cal-num">${d}</span>
+          ${list.slice(0, 2).map(n => `<span class="cal-pill cat-${n.type} ${n.completed ? 'done' : ''}">${esc(n.title)}</span>`).join('')}
+          ${list.length > 2 ? `<span class="cal-more">+${list.length - 2}</span>` : ''}
+          <span class="cal-dots">${list.slice(0, 4).map(n => `<i class="cat-${n.type}"></i>`).join('')}</span>
+        </button>`);
+      }
+      const selList = sortNotes(byDate[calSelected] || [], 'due');
+      currentViewIds = selList.map(n => n.id);
+      const wks = currentLang === 'en' ? ['S','M','T','W','T','F','S'] : ['日','一','二','三','四','五','六'];
+
+      container.innerHTML = `
+        <div class="page-head">
+          <div><div class="eyebrow">${t('calTitle')}</div><h1 class="display">${y} / ${m + 1}</h1><p class="page-sub">${t('calSub')}</p></div>
+          <div class="row gap4">
+            <button class="icon-btn" onclick="shiftMonth(-1)">${ICON.chevL}</button>
+            <button class="btn btn-outlined sm" onclick="shiftMonth(0)">${t('today')}</button>
+            <button class="icon-btn" onclick="shiftMonth(1)">${ICON.chevR}</button>
+          </div>
+        </div>
+        <section class="panel">
+          <div class="cal-week">${wks.map(w => `<span>${w}</span>`).join('')}</div>
+          <div class="cal-grid">${cells.join('')}</div>
+        </section>
+        <div class="panel-head">
+          <h2 class="section-title">${calSelected} <span class="hint">${selList.length}</span></h2>
+          <button class="btn btn-text sm" onclick="openNewModal('${calSelected}')">${t('addOnDay')}</button>
+        </div>
+        <div class="card-grid">${selList.length ? selList.map((n, i) => renderCompactCardHtml(n, i)).join('') : `<div class="empty"><div class="empty-icon">${ICON.emptyLeaf}</div><div>${t('emptyDay')}</div></div>`}</div>`;
+    }
+
+    // Search View
+    let searchKw = '';
+    function toggleSearchTag(tag) {
+      searchKw = searchKw === tag ? '' : tag;
+      const inp = $('searchInput');
+      if (inp) inp.value = searchKw;
+      updateSearchResults();
+    }
+    function renderSearchView(container) {
+      container.innerHTML = `
+        <div class="page-head"><div><div class="eyebrow">${t('searchTitle')}</div><h1 class="display">${t('searchTitle')}</h1></div></div>
+        <div class="search-field">${ICON.search}<input id="searchInput" class="modal-input" placeholder="${t('searchPh')}" value="${esc(searchKw)}" oninput="searchKw=this.value; updateSearchResults();"></div>
+        <div id="tagCloud" class="row gap6 wrap" style="margin-bottom:20px;"></div>
+        <div id="searchResults"></div>`;
+      updateSearchResults();
+    }
+    function updateSearchResults() {
+      const map = {};
+      notes.forEach(n => (n.tags || []).forEach(x => { map[x] = n.type; }));
+      $('tagCloud').innerHTML = Object.keys(map).map(x => `<button class="fchip cat-${map[x]} ${searchKw === x ? 'selected' : ''}" data-tag="${esc(x)}" onclick="toggleSearchTag(this.dataset.tag)"><span class="dot"></span>${esc(x)}</button>`).join('');
+      const q = searchKw.trim().toLowerCase();
+      const filtered = sortNotes(notes.filter(n => !n.isOptimistic && (!q || n.title.toLowerCase().includes(q) || (n.content || '').toLowerCase().includes(q) || (n.tags || []).some(x => x.toLowerCase().includes(q)))), 'due');
+      currentViewIds = filtered.map(n => n.id);
+      $('searchResults').innerHTML = `<div class="card-grid">${filtered.length ? filtered.map((n, i) => renderCompactCardHtml(n, i)).join('') : `<div class="empty"><div class="empty-icon">${ICON.search}</div><div>${t('searchEmpty')}</div></div>`}</div>`;
+    }
+
+    // Settings View
+    function renderSettingsView(container) {
+      const currentKey = getStoredGeminiKey();
+      container.innerHTML = `
+        <div class="page-head"><div><div class="eyebrow">${t('navSettings')}</div><h1 class="display">${t('settingsTitle')}</h1><p class="page-sub">${t('settingsSub')}</p></div></div>
+
+        <section class="panel">
+          <div class="panel-title" style="margin-bottom:12px;">${ICON.globe}<span>${t('langLabel')}</span></div>
+          <div class="row gap8 wrap">
+            <button class="fchip ${currentLang === 'zh-TW' ? 'selected' : ''}" onclick="setLanguage('zh-TW')">繁體中文</button>
+            <button class="fchip ${currentLang === 'zh-CN' ? 'selected' : ''}" onclick="setLanguage('zh-CN')">简体中文</button>
+            <button class="fchip ${currentLang === 'en' ? 'selected' : ''}" onclick="setLanguage('en')">English</button>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-title" style="margin-bottom:8px;"><span style="color:#9B72CB">${ICON.spark}</span> Google Gemini API</div>
+          <label class="field-label">API Key</label>
+          <input type="password" id="geminiApiKeyInput" value="${esc(currentKey)}" class="modal-input" placeholder="AIza…" autocomplete="off">
+          <label class="field-label">Model</label>
+          <input id="geminiModelInput" value="${esc(getStoredModel())}" class="modal-input" placeholder="${DEFAULT_MODEL}">
+          <div class="row gap8 wrap">
+            <button class="btn btn-filled sm" onclick="saveGeminiApiKey()">${t('saveSettings')}</button>
+            ${currentKey ? `<button class="btn btn-danger-text sm" onclick="localStorage.removeItem('mindnote_gemini_api_key'); renderCurrentView();">${t('clearKey')}</button>` : ''}
+            <span class="cat-badge ${currentKey ? 'cat-memo' : ''}" style="margin-left:auto;">${currentKey ? '<span class="laser-dot"></span>' : ''}<span>${currentKey ? t('aiActive') : t('aiOffline')}</span></span>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-title" style="margin-bottom:12px;">${ICON.database}<span>${t('backupTitle')}</span></div>
+          <div class="row gap8 wrap">
+            <button class="btn btn-tonal sm" onclick="exportJsonBackup()">${t('exportJson')}</button>
+            <button class="btn btn-outlined sm" onclick="$('importFileInput').click()">${t('importJson')}</button>
+            <input type="file" id="importFileInput" accept="application/json,.json" style="display:none;" onchange="importJsonBackup(event)">
+            <button class="btn btn-danger-text sm" onclick="resetToDefaults()">${t('resetDemo')}</button>
+          </div>
+        </section>`;
+    }
+
+    function saveGeminiApiKey() {
+      const val = $('geminiApiKeyInput').value.trim(), model = $('geminiModelInput').value.trim() || DEFAULT_MODEL;
+      val ? localStorage.setItem('mindnote_gemini_api_key', val) : localStorage.removeItem('mindnote_gemini_api_key');
+      localStorage.setItem('mindnote_gemini_model', model);
+      showToast(`✨ Saved (${model})`); renderCurrentView();
+    }
+    function exportJsonBackup() {
+      const blob = new Blob([JSON.stringify({ notes: notes.filter(n => !n.isOptimistic), exportedAt: new Date().toISOString() }, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob), a = document.createElement('a');
+      a.href = url; a.download = `MindNote_${todayStr()}.json`; a.click(); URL.revokeObjectURL(url);
+    }
+    function importJsonBackup(e) {
+      const file = e.target.files[0]; if (!file) return;
+      const r = new FileReader();
+      r.onload = ev => {
+        try {
+          const d = JSON.parse(ev.target.result);
+          if (Array.isArray(d.notes)) {
+            notes = d.notes.filter(n => n && !n.isOptimistic).map(normalizeNote);
+            saveState();
+            showToast('✅ Imported');
+          }
+        } catch (err) { showToast('⚠️ Invalid JSON'); }
+        e.target.value = '';
+      };
+      r.readAsText(file);
+    }
+    async function resetToDefaults() {
+      if (!(await askConfirm(t('resetDemo'), t('resetDemo') + '?'))) return;
+      notes = cloneDefaults(); saveState();
+    }
+
+    // ==========================================
+    // 9. Modals & Direct Inline Step Editing
+    // ==========================================
+    function openModal(id) { $(id).classList.add('open'); document.body.style.overflow = 'hidden'; }
+    function closeModal(id) { $(id).classList.remove('open'); if (!document.querySelector('.modal-overlay.open')) document.body.style.overflow = ''; }
+
+    function openLightboxModal(id) {
+      const note = notes.find(n => n.id === id);
+      if (!note || note.isOptimistic) return;
+      if (copilotState?.noteId !== id) copilotState = null;
+
+      $('lightboxTitle').textContent = note.title;
+      $('lightboxBadge').innerHTML = `<div class="row gap8 wrap">${catChip(note.type, true)}${note.dueDate ? '<span class="meta-sep">·</span>' : ''}${getDueBadgeHtml(note.dueDate)}</div>`;
+      $('lightboxContentBox').innerHTML = (note.content && note.content !== note.title) ? `<div class="callout neutral">${esc(note.content)}</div>` : '';
+      $('lightboxReasonBox').innerHTML = note.reason ? `<div class="callout purple"><div class="callout-title">${ICON.bulb}<span>${t('formReasonLbl')}</span></div><div>${esc(note.reason)}</div></div>` : '';
+
+      renderLightboxCopilot();
+      const steps = note.steps || [];
+      const done = steps.filter(s => s.completed).length;
+      $('lightboxStepsBox').innerHTML = `
+        <div class="cat-${note.type}">
+          <div class="progress-label" style="font-size:13px; color:var(--on-surface); font-weight:700;">
+            <span>${t('stepProgress')}</span><span>${done}/${steps.length}</span>
+          </div>
+          ${steps.length ? `<div class="progress" style="margin-bottom:10px;"><i style="width:${Math.round(done / steps.length * 100)}%"></i></div>` : ''}
+          <div class="list" style="margin-bottom:10px;">
+            ${steps.map(s => `
+              <div class="step-row ${s.completed ? 'done' : ''}">
+                <label class="round-check"><input type="checkbox" ${s.completed ? 'checked' : ''} onchange="toggleStepItem('${esc(note.id)}','${esc(s.id)}')"><span></span></label>
+                <input class="step-edit-input" value="${esc(s.text)}" onchange="updateStepText('${esc(note.id)}','${esc(s.id)}',this.value)">
+                <button class="icon-btn sm" title="AI 拆小" onclick="openAiStepCopilot('${esc(note.id)}','${esc(s.id)}')">${ICON.wand}</button>
+                <button class="icon-btn sm" onclick="deleteStepItem('${esc(note.id)}','${esc(s.id)}')">✕</button>
+              </div>`).join('')}
+          </div>
+          <input class="modal-input" style="margin:0; height:38px; font-size:13px;" placeholder="${t('addStepPh')}"
+                 onkeydown="if(event.key==='Enter' && !event.isComposing && this.value.trim()){ addManualStep('${esc(note.id)}', this.value.trim()); this.value=''; }">
+        </div>`;
+
+      $('lightboxSprintBtn').innerHTML = `${ICON.timer}<span>${t('sprint15')}</span>`;
+      $('lightboxSprintBtn').onclick = () => { closeLightboxModal(); openSprintModal(note.id); };
+      $('lightboxAiStepBtn').innerHTML = `${ICON.spark}<span>${t('aiStepsBtn')}</span>`;
+      $('lightboxAiStepBtn').onclick = () => openAiStepCopilot(note.id, null);
+      $('lightboxEditBtn').textContent = t('edit');
+      $('lightboxEditBtn').onclick = () => { closeLightboxModal(); openEditModal(note.id); };
+      $('lightboxDeleteBtn').textContent = t('del');
+      $('lightboxDeleteBtn').onclick = () => deleteNote(note.id);
+      openModal('lightboxModal');
+    }
+    function closeLightboxModal() { copilotState = null; closeModal('lightboxModal'); }
+
+    function toggleStepItem(noteId, stepId) {
+      let allDone = false;
+      notes = notes.map(n => {
+        if (n.id !== noteId) return n;
+        const steps = n.steps.map(s => s.id === stepId ? { ...s, completed: !s.completed } : s);
+        allDone = steps.length > 0 && steps.every(s => s.completed) && !n.completed;
+        return { ...n, steps };
+      });
+      haptic(8); playTickChime(); saveState(); openLightboxModal(noteId);
+      if (allDone) { burst(); playSuccessChime(); }
+    }
+    function updateStepText(noteId, stepId, text) {
+      notes = notes.map(n => n.id !== noteId ? n : { ...n, steps: n.steps.map(s => s.id === stepId ? { ...s, text: text.trim() || s.text } : s) });
+      saveState();
+    }
+    function deleteStepItem(noteId, stepId) {
+      notes = notes.map(n => n.id !== noteId ? n : { ...n, steps: n.steps.filter(s => s.id !== stepId) });
+      saveState(); openLightboxModal(noteId);
+    }
+    function addManualStep(noteId, text) {
+      notes = notes.map(n => n.id !== noteId ? n : { ...n, steps: [...(n.steps || []), { id: uid('s'), text, completed: false }] });
+      saveState(); openLightboxModal(noteId);
+    }
+
+    // Create / Edit Modal
+    let modalCategory = 'academic';
+    function openNewModal(dateStr) {
+      editingNoteId = null; $('modalFormHeading').textContent = t('formNew');
+      ['aiModalPromptInput', 'formTitle', 'formContent', 'formReason', 'formSteps', 'formTags'].forEach(id => $(id).value = '');
+      $('formDueDate').value = typeof dateStr === 'string' ? dateStr : todayStr();
+      setModalCategory(currentTab === 'memo' ? 'memo' : 'academic');
+      openModal('createModal'); setTimeout(() => $('formTitle').focus(), 200);
+    }
+    function openEditModal(id) {
+      const n = notes.find(x => x.id === id); if (!n) return;
+      editingNoteId = id; $('modalFormHeading').textContent = t('formEdit');
+      $('aiModalPromptInput').value = ''; $('formTitle').value = n.title; $('formContent').value = n.content || '';
+      $('formReason').value = n.reason || ''; $('formSteps').value = (n.steps || []).map(s => s.text).join('\n');
+      $('formDueDate').value = n.dueDate || ''; $('formTags').value = (n.tags || []).join(' ');
+      setModalCategory(n.type); openModal('createModal');
+    }
+    function openNewModalWithType(type) { openNewModal(); setModalCategory(type); }
+    function openNewModalWithDraft() {
+      const d = $('quickPromptInput').value.trim(); openNewModal();
+      $('aiModalPromptInput').value = d; $('formTitle').value = d;
+      if (quickSelectedType !== 'auto') setModalCategory(quickSelectedType);
+    }
+    function closeNewModal() { closeModal('createModal'); }
+    function setModalCategory(type) { modalCategory = type; ['academic', 'memo'].forEach(x => $(`modalType-${x}`).classList.toggle('selected', x === type)); }
+
+    async function fillModalViaAi() {
+      const val = $('aiModalPromptInput').value.trim(); if (!val) return;
+      const btn = $('aiFillBtn'), orig = btn.innerHTML;
+      btn.disabled = true; btn.innerHTML = `${ICON.spinner}<span>${t('thinking')}</span>`;
+      try {
+        const p = await smartPlanTask(val, true);
+        setModalCategory(p.type); $('formTitle').value = p.title; $('formContent').value = p.content;
+        $('formReason').value = p.reason; $('formDueDate').value = p.dueDate || todayStr();
+        $('formTags').value = (p.tags || []).join(' '); $('formSteps').value = (p.steps || []).map(s => s.text).join('\n');
+        playTickChime();
+      } finally { btn.disabled = false; btn.innerHTML = orig; }
+    }
+
+    function saveNoteForm() {
+      const title = $('formTitle').value.trim(); if (!title) { $('formTitle').focus(); return; }
+      let content = $('formContent').value.trim(); if (content === title) content = '';
+      const reason = $('formReason').value.trim(), dueDate = $('formDueDate').value;
+      const tags = $('formTags').value.trim().split(/[\s,，]+/).filter(Boolean).map(x => x.startsWith('#') ? x : '#' + x);
+      const stepLines = $('formSteps').value.split('\n').map(s => s.trim()).filter(Boolean);
+
+      if (editingNoteId) {
+        notes = notes.map(n => {
+          if (n.id !== editingNoteId) return n;
+          const old = n.steps || [];
+          const steps = stepLines.map(text => old.find(s => s.text === text) || { id: uid('s'), text, completed: false });
+          return { ...n, type: modalCategory, title, content, reason, dueDate, tags, steps };
+        });
+      } else {
+        notes.unshift({ id: uid('note'), type: modalCategory, title, content, reason, createdAt: new Date().toISOString(), dueDate, starred: false, completed: false, tags, steps: stepLines.map(text => ({ id: uid('s'), text, completed: false })) });
+      }
+      saveState(); closeNewModal(); playTickChime();
+    }
+
+    function toggleNoteComplete(id) {
+      const n = notes.find(x => x.id === id); if (!n) return;
+      const nowDone = !n.completed, pos = { ...lastPointer };
+      notes = notes.map(x => x.id === id ? { ...x, completed: nowDone } : x);
+      if (nowDone && aiPickResult?.id === id) aiPickResult = null;
+      haptic(nowDone ? 18 : 8);
+      if (nowDone) { burst(pos.x, pos.y); playSuccessChime(); showToast(`🎉 ${n.title}`); }
+      setTimeout(saveState, nowDone ? 160 : 0);
+    }
+    function toggleStar(id) { notes = notes.map(n => n.id === id ? { ...n, starred: !n.starred } : n); haptic(6); saveState(); }
+
+    // 15-Minute Sprint Timer
+    const RING_C = 552.92;
+    let sprintSeconds = 900, sprintTotal = 900, sprintTimerInterval = null, sprintRunning = false, currentSprintNoteId = null;
+    function openSprintModal(id) {
+      const n = notes.find(x => x.id === id); currentSprintNoteId = id;
+      $('sprintTaskTitle').textContent = n ? n.title : t('sprint15');
+      sprintSeconds = sprintTotal = 900; updateSprintDisplay(); openModal('sprintModal'); startSprintTimer();
+    }
+    function closeSprintModal() { clearInterval(sprintTimerInterval); sprintRunning = false; $('sprintRingWrap').classList.remove('running'); closeModal('sprintModal'); }
+    function updateSprintDisplay() {
+      $('sprintTimerDisplay').textContent = `${pad(Math.floor(sprintSeconds / 60))}:${pad(sprintSeconds % 60)}`;
+      $('sprintRing').style.strokeDashoffset = RING_C * (1 - sprintSeconds / sprintTotal);
+      $('sprintSub').textContent = sprintSeconds === 0 ? t('sprintSubDone') : sprintRunning ? t('sprintSubRun') : t('sprintSubPause');
+    }
+    function toggleSprintTimer() {
+      if (sprintSeconds === 0) { const n = notes.find(x => x.id === currentSprintNoteId); if (n && !n.completed) toggleNoteComplete(currentSprintNoteId); closeSprintModal(); return; }
+      if (sprintRunning) { clearInterval(sprintTimerInterval); sprintRunning = false; $('sprintRingWrap').classList.remove('running'); $('sprintToggleBtn').textContent = t('sprintResume'); updateSprintDisplay(); }
+      else startSprintTimer();
+    }
+    function startSprintTimer() {
+      clearInterval(sprintTimerInterval); sprintRunning = true;
+      $('sprintRingWrap').classList.add('running'); $('sprintToggleBtn').textContent = t('sprintPause'); updateSprintDisplay();
+      sprintTimerInterval = setInterval(() => {
+        if (sprintSeconds > 0) { sprintSeconds--; updateSprintDisplay(); }
+        if (sprintSeconds === 0) {
+          clearInterval(sprintTimerInterval); sprintRunning = false; $('sprintRingWrap').classList.remove('running');
+          playSuccessChime(); burst(); $('sprintToggleBtn').textContent = t('sprintMarkDone'); updateSprintDisplay();
+        }
+      }, 1000);
+    }
+    function resetSprintTimer() { clearInterval(sprintTimerInterval); sprintRunning = false; $('sprintRingWrap').classList.remove('running'); sprintSeconds = sprintTotal = 900; updateSprintDisplay(); $('sprintToggleBtn').textContent = t('sprintStart'); }
+    function add5MinSprint() { sprintSeconds += 300; sprintTotal += 300; updateSprintDisplay(); }
+
+    // Keyboard shortcuts
+    window.addEventListener('keydown', e => {
+      if (e.key === 'Escape') {
+        if ($('confirmModal').classList.contains('open')) { resolveConfirm(false); return; }
+        ['lightboxModal', 'createModal', 'sprintModal'].forEach(id => {
+          if ($(id).classList.contains('open')) {
+            if (id === 'sprintModal') closeSprintModal();
+            else if (id === 'lightboxModal') closeLightboxModal();
+            else closeModal(id);
+          }
+        });
+        return;
+      }
+      if (/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName) || e.ctrlKey || e.metaKey || e.altKey || document.querySelector('.modal-overlay.open')) return;
+      if (e.key === '/') { e.preventDefault(); $('quickPromptInput').focus(); }
+      else if (e.key.toLowerCase() === 'n') { e.preventDefault(); openNewModal(); }
+    });
+
+    // Boot & Liquid-Mercury Nav Indicator Sync
+    function boot() {
+      applyStaticI18n();
+      renderCurrentView();
+      requestAnimationFrame(() => updateNavIndicator(true));
+      if (window.ResizeObserver && $('navRail')) {
+        new ResizeObserver(() => updateNavIndicator(true)).observe($('navRail'));
+      }
+      window.addEventListener('resize', () => updateNavIndicator(true));
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(() => updateNavIndicator(true));
+      }
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
+  </script>
+</body>
+</html>
